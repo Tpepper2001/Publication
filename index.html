@@ -37,14 +37,11 @@
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        /* Essential for page switching */
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         h1 { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: #111827; }
+        h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; color: #111827; }
         
         .section {
             background: #ffffff;
@@ -113,94 +110,93 @@
         .response-card { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
         .data-row { display: flex; border-bottom: 1px solid #f3f4f6; padding: 6px 0; font-size: 0.85rem; }
         .data-label { width: 150px; font-weight: 700; color: var(--text-light); }
-        .img-preview { max-width: 100px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        .img-preview { max-width: 100px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        
+        .admin-section { margin-top: 50px; }
+        .login-box { max-width: 400px; margin: 0 auto; }
+        #adminContent { display: none; }
+        #adminContent.show { display: block; }
         
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <!-- MEMBER FORM PAGE -->
-    <div id="formPage" class="page active">
-        <div class="container">
-            <h1>Bio-Info System</h1>
-            <div id="formMessage" class="message"></div>
-            
-            <form id="bioInfoForm">
-                <div class="section">
-                    <span class="section-title">1. Personal Info</span>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" required></div>
-                        <div class="form-group"><label>Email *</label><input type="email" id="email" required></div>
-                        <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
-                        <div class="form-group">
-                            <label>Discipline *</label>
-                            <select id="discipline" required>
-                                <option value="">Select...</option>
-                                <option>Engineering</option><option>Computer Science</option>
-                                <option>Health Sciences</option><option>Physical Sciences</option>
-                                <option>Social Sciences</option><option>Other</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <span class="section-title">2. Manuscript & Group</span>
+    <!-- MEMBER FORM SECTION -->
+    <div class="container">
+        <h1>Bio-Info System</h1>
+        <div id="formMessage" class="message"></div>
+        
+        <form id="bioInfoForm">
+            <div class="section">
+                <span class="section-title">1. Personal Info</span>
+                <div class="form-grid">
+                    <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="email" required></div>
+                    <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
                     <div class="form-group">
-                        <label>Who wrote it? *</label>
-                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Copied Online" required> Copied Online</label>
-                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Yourself"> Yourself</label>
-                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Hired Professional"> Hired Professional</label>
-                    </div>
-                    <div class="form-group">
-                        <label>Referrer Info</label>
-                        <textarea id="referral" rows="2" placeholder="Name/Number of person who recommended you"></textarea>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <span class="section-title">3. Journal Details</span>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Co-authors count *</label><input type="number" id="coauthors" required></div>
-                        <div class="form-group"><label>Charge per author</label><input type="text" id="charge"></div>
-                    </div>
-                    <div class="form-group"><label>Journal Name *</label><input type="text" id="journal" required></div>
-                    <div class="form-group"><label>LinkedIn URL *</label><input type="url" id="linkedin" required></div>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Acceptance Proof</label><input type="file" id="acceptance_file" accept="image/*"></div>
-                        <div class="form-group"><label>ID Card (NIN)</label><input type="file" id="id_file" accept="image/*"></div>
+                        <label>Discipline *</label>
+                        <select id="discipline" required>
+                            <option value="">Select...</option>
+                            <option>Engineering</option><option>Computer Science</option>
+                            <option>Health Sciences</option><option>Physical Sciences</option>
+                            <option>Social Sciences</option><option>Other</option>
+                        </select>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" id="submitBtn" class="btn btn-primary">Submit Application</button>
-            </form>
-            
-            <!-- Navigation Button - FIXED: Added type="button" -->
-            <button type="button" class="btn btn-admin" onclick="showPage('loginPage')">Admin Dashboard</button>
-        </div>
+            <div class="section">
+                <span class="section-title">2. Manuscript & Group</span>
+                <div class="form-group">
+                    <label>Who wrote it? *</label>
+                    <label class="radio-option"><input type="radio" name="manuscript_writer" value="Copied Online" required> Copied Online</label>
+                    <label class="radio-option"><input type="radio" name="manuscript_writer" value="Yourself"> Yourself</label>
+                    <label class="radio-option"><input type="radio" name="manuscript_writer" value="Hired Professional"> Hired Professional</label>
+                </div>
+                <div class="form-group">
+                    <label>Referrer Info</label>
+                    <textarea id="referral" rows="2" placeholder="Name/Number of person who recommended you"></textarea>
+                </div>
+            </div>
+
+            <div class="section">
+                <span class="section-title">3. Journal Details</span>
+                <div class="form-grid">
+                    <div class="form-group"><label>Co-authors count *</label><input type="number" id="coauthors" required></div>
+                    <div class="form-group"><label>Charge per author</label><input type="text" id="charge"></div>
+                </div>
+                <div class="form-group"><label>Journal Name *</label><input type="text" id="journal" required></div>
+                <div class="form-group"><label>LinkedIn URL *</label><input type="url" id="linkedin" required></div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Acceptance Proof</label><input type="file" id="acceptance_file" accept="image/*"></div>
+                    <div class="form-group"><label>ID Card (NIN)</label><input type="file" id="id_file" accept="image/*"></div>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn btn-primary">Submit Application</button>
+        </form>
     </div>
 
-    <!-- LOGIN PAGE -->
-    <div id="loginPage" class="page">
-        <div class="container" style="max-width: 400px;">
-            <h1>Admin Login</h1>
+    <!-- ADMIN SECTION -->
+    <div class="container admin-section">
+        <h2 style="text-align: center;">Admin Dashboard</h2>
+        
+        <!-- Login Box -->
+        <div id="loginBox" class="login-box">
             <div id="loginMessage" class="message"></div>
             <form id="loginForm">
                 <div class="form-group"><label>Username</label><input type="text" id="username" required></div>
                 <div class="form-group"><label>Password</label><input type="password" id="password" required></div>
-                <button type="submit" class="btn btn-primary">Login</button>
-                <button type="button" class="btn btn-secondary" onclick="showPage('formPage')">Cancel</button>
+                <button type="submit" class="btn btn-admin">Login to View Submissions</button>
             </form>
         </div>
-    </div>
 
-    <!-- ADMIN DASHBOARD PAGE -->
-    <div id="adminPage" class="page">
-        <div class="container">
+        <!-- Admin Content (hidden until login) -->
+        <div id="adminContent">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h1>Submissions</h1>
-                <button type="button" onclick="showPage('formPage')" style="color:red; font-weight:bold; cursor:pointer; background:none; border:none;">Logout</button>
+                <h2>All Submissions</h2>
+                <button type="button" onclick="logout()" class="btn btn-secondary" style="width: auto; padding: 8px 16px;">Logout</button>
             </div>
             <div id="responsesContainer"></div>
         </div>
@@ -212,30 +208,7 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdHJvc255bHZraXV2dXB0ZHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzE2NzEsImV4cCI6MjA4MjUwNzY3MX0.ku6_Ngf2JRJ8fxLs_Q-EySgCU37MjUK3WofpO9bazds';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // 2. Navigation Logic
-        function showPage(pageId) {
-            console.log("Switching to page:", pageId);
-            
-            // Hide all pages
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => p.classList.remove('active'));
-            
-            // Show the requested page
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-                window.scrollTo(0,0);
-            } else {
-                console.error("Page ID not found:", pageId);
-            }
-
-            // If going to admin dashboard, load data
-            if (pageId === 'adminPage') {
-                loadAdminData();
-            }
-        }
-
-        // 3. Helper: Convert image to text
+        // 2. Helper: Convert image to base64
         async function toBase64(file) {
             if (!file) return null;
             return new Promise((resolve) => {
@@ -245,7 +218,7 @@
             });
         }
 
-        // 4. Form Submission
+        // 3. Form Submission
         document.getElementById('bioInfoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -275,6 +248,9 @@
                 msg.textContent = "Application Submitted Successfully!";
                 msg.className = "message success show";
                 e.target.reset();
+                
+                // Scroll to top to show success message
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (err) {
                 alert("Error: " + err.message);
             } finally {
@@ -283,20 +259,30 @@
             }
         });
 
-        // 5. Admin Login Logic
+        // 4. Admin Login Logic
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const u = document.getElementById('username').value;
             const p = document.getElementById('password').value;
 
             if (u === 'publication' && p === 'publication') {
-                showPage('adminPage');
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('adminContent').classList.add('show');
+                loadAdminData();
             } else {
                 const logMsg = document.getElementById('loginMessage');
                 logMsg.textContent = "Invalid Login Credentials";
                 logMsg.className = "message error show";
             }
         });
+
+        // 5. Logout Function
+        function logout() {
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('adminContent').classList.remove('show');
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginMessage').className = 'message';
+        }
 
         // 6. Load Admin Data
         async function loadAdminData() {
@@ -333,8 +319,8 @@
                     <div class="data-row">
                         <div class="data-label">FILES</div>
                         <div class="data-val">
-                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview" alt="Acceptance">` : 'No Acceptance Image'}
-                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview" alt="ID">` : 'No ID Image'}
+                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview" alt="Acceptance" onclick="window.open(this.src)">` : 'No Acceptance Image'}
+                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview" alt="ID" onclick="window.open(this.src)">` : 'No ID Image'}
                         </div>
                     </div>
                 </div>
