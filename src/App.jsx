@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { 
   User, BookOpen, PenTool, Link, Image as ImageIcon, 
-  ShieldCheck, HelpCircle, DollarSign, Info
+  ShieldCheck, HelpCircle, DollarSign, FileUp
 } from 'lucide-react';
 
 // --- Supabase Config ---
@@ -23,7 +23,7 @@ const App = () => {
     pub_referral: '', pub_group_duration: '', pub_coauthors_count: '',
     pub_charge_per_author: '', pub_journal_name: '', pub_journal_accepted: '',
     pub_journal_justification: '', pub_acceptance_evidence: null,
-    pub_id_document: null, pub_linkedin_profile: ''
+    pub_id_document: null, pub_linkedin_profile: '', pub_manuscript_file: null
   });
 
   useEffect(() => { fetchSubmissionCount(); }, []);
@@ -40,10 +40,21 @@ const App = () => {
 
   const handleFileChange = async (e) => {
     const { name, files } = e.target;
-    if (files[0]) {
+    const file = files[0];
+    
+    if (file) {
+      // 50KB Limit Check (50 * 1024 bytes)
+      const limit = 50 * 1024;
+      if (file.size > limit) {
+        alert(`File is too large (${(file.size / 1024).toFixed(1)}KB). The maximum allowed size is 50KB. Please compress your image.`);
+        e.target.value = ""; // Clear the input
+        setFormData(prev => ({ ...prev, [name]: null }));
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => setFormData(prev => ({ ...prev, [name]: reader.result }));
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -55,10 +66,12 @@ const App = () => {
       if (error) throw error;
       setMessage({ text: 'Form Submitted Successfully!', type: 'success' });
       setFormData({
-        pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '', pub_manuscript_writer: '', pub_competence_score: '', 
-        pub_group_source: '', pub_referral: '', pub_group_duration: '', pub_coauthors_count: '', pub_charge_per_author: '', 
-        pub_journal_name: '', pub_journal_accepted: '', pub_journal_justification: '', pub_acceptance_evidence: null, 
-        pub_id_document: null, pub_linkedin_profile: ''
+        pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '',
+        pub_manuscript_writer: '', pub_competence_score: '', pub_group_source: '',
+        pub_referral: '', pub_group_duration: '', pub_coauthors_count: '',
+        pub_charge_per_author: '', pub_journal_name: '', pub_journal_accepted: '',
+        pub_journal_justification: '', pub_acceptance_evidence: null,
+        pub_id_document: null, pub_linkedin_profile: '', pub_manuscript_file: null
       });
       fetchSubmissionCount();
       window.scrollTo(0, 0);
@@ -107,7 +120,7 @@ const App = () => {
         </div>
 
         <header style={s.header}>
-          <h1 style={s.title}>Publication Group Form</h1>
+          <h1 style={s.title}>Manuscript submission form</h1>
           {view === 'form' ? 
             <button style={{marginTop:'15px', color:'#4f46e5', background:'none', border:'none', cursor:'pointer', fontWeight:'bold'}} onClick={()=>setView('login')}>Admin Access</button> :
             <button style={{marginTop:'15px', color:'#4f46e5', background:'none', border:'none', cursor:'pointer', fontWeight:'bold'}} onClick={()=>setView('form')}>Back to Form</button>
@@ -118,7 +131,6 @@ const App = () => {
 
         {view === 'form' && (
           <form onSubmit={handleSubmit}>
-            {/* --- BIO INFO --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Bio-Info</h2>
               <label style={s.label}>Full Name</label><input style={s.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} />
@@ -131,7 +143,6 @@ const App = () => {
               </select>
             </div>
 
-            {/* --- MANUSCRIPT STANDARD --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Info about the standard of the manuscript</h2>
               <label style={s.label}>Who wrote the manuscript?</label>
@@ -148,7 +159,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* --- ORIGIN --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Info about the authors origin on group</h2>
               <label style={s.label}>How did you hear about the group?</label>
@@ -167,7 +177,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* --- SOURCING --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Info about the sourcing</h2>
               <label style={s.label}>How many co-authors are you looking at?</label>
@@ -177,7 +186,6 @@ const App = () => {
               <div style={s.note}>Note: Authors cannot accumulate more than 150k from the group. i.e regardless of number of co-authors you want to source, the total amount you can accumulate per paper is 150k</div>
             </div>
 
-            {/* --- JOURNALS --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Info about journals</h2>
               <label style={s.label}>What journal are you using?</label>
@@ -190,17 +198,22 @@ const App = () => {
               </div>
               <label style={s.label}>Justify why you are using the journal and drop the journal link.</label>
               <textarea style={{...s.input, minHeight:'80px'}} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea>
-              <label style={s.label}>Screenshot and upload evidence of Acceptance</label>
+              <label style={s.label}>Screenshot and upload evidence of Acceptance (Max 50KB)</label>
               <input type="file" name="pub_acceptance_evidence" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
             </div>
 
-            {/* --- ID --- */}
             <div style={s.section}>
               <h2 style={s.secHead}>Info about means of Identification</h2>
-              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport ( optional)</label>
+              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport (optional - Max 50KB)</label>
               <input type="file" name="pub_id_document" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
               <label style={s.label}>Drop the link of your LinkedIn profile. (Compulsory)</label>
               <input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/..." />
+            </div>
+
+            <div style={s.section}>
+              <h2 style={s.secHead}>Submit the Manuscript</h2>
+              <label style={s.label}>Upload (Max 50KB)</label>
+              <input type="file" name="pub_manuscript_file" required onChange={handleFileChange} style={{marginBottom:'25px'}} />
             </div>
 
             <button type="submit" disabled={loading} style={{...s.btn, opacity: loading ? 0.7 : 1}}>
@@ -230,20 +243,17 @@ const App = () => {
                 <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'20px'}}>
                   <div><span style={s.dataLabel}>Email / Phone</span>{row.pub_email}<br/>{row.pub_phone}</div>
                   <div><span style={s.dataLabel}>Discipline</span>{row.pub_discipline}</div>
-                  <div><span style={s.dataLabel}>Journal</span>{row.pub_journal_name} (Accepted: {row.pub_journal_accepted})</div>
-                  <div><span style={s.dataLabel}>Writer</span>{row.pub_manuscript_writer}</div>
+                  <div><span style={s.dataLabel}>Journal</span>{row.pub_journal_name}</div>
+                  <div><span style={s.dataLabel}>Manuscript</span>{row.pub_manuscript_file ? '✅ Uploaded' : '❌ Missing'}</div>
                 </div>
                 <div style={{marginTop:'20px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', backgroundColor:'#f8fafc', padding:'15px', borderRadius:'8px'}}>
-                  <div><span style={s.dataLabel}>Origin Info</span>Source: {row.pub_group_source}<br/>Spent: {row.pub_group_duration}<br/>Referrer: {row.pub_referral || 'N/A'}</div>
+                  <div><span style={s.dataLabel}>Origin Info</span>Source: {row.pub_group_source}<br/>Spent: {row.pub_group_duration}</div>
                   <div><span style={s.dataLabel}>Sourcing Details</span>Co-Authors: {row.pub_coauthors_count}<br/>Charge: {row.pub_charge_per_author}</div>
                 </div>
-                <div style={{marginTop:'15px'}}>
-                   <span style={s.dataLabel}>Justification / Link</span><p style={{fontSize:'13px', margin:0}}>{row.pub_journal_justification}</p>
-                </div>
                 <div style={{display:'flex', gap:'30px', marginTop:'20px', alignItems:'flex-end'}}>
-                   <div><span style={s.dataLabel}>Acceptance</span>{row.pub_acceptance_evidence ? <img src={row.pub_acceptance_evidence} style={s.img} /> : 'None'}</div>
-                   <div><span style={s.dataLabel}>ID Document</span>{row.pub_id_document ? <img src={row.pub_id_document} style={s.img} /> : 'None'}</div>
-                   <div style={{marginLeft:'auto'}}><a href={row.pub_linkedin_profile} target="_blank" style={{color:'#4f46e5', fontWeight:'bold', fontSize:'14px'}}>LinkedIn</a></div>
+                   <div><span style={s.dataLabel}>Acceptance</span>{row.pub_acceptance_evidence ? <img src={row.pub_acceptance_evidence} style={s.img} alt="acceptance" /> : 'None'}</div>
+                   <div><span style={s.dataLabel}>ID Document</span>{row.pub_id_document ? <img src={row.pub_id_document} style={s.img} alt="id" /> : 'None'}</div>
+                   <div style={{marginLeft:'auto'}}><a href={row.pub_linkedin_profile} target="_blank" rel="noreferrer" style={{color:'#4f46e5', fontWeight:'bold', fontSize:'14px'}}>LinkedIn</a></div>
                 </div>
               </div>
             ))}
