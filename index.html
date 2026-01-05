@@ -36,14 +36,15 @@
             background: var(--glass);
             padding: 40px;
             border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Essential for page switching */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        h1 { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: #111827; }
+        h1 { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: #111827; }
         
         .section {
             background: #ffffff;
@@ -54,92 +55,72 @@
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
+            margin-bottom: 18px;
+            display: block;
             border-bottom: 2px solid #f3f4f6;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { margin-bottom: 18px; }
-
-        label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; color: #374151; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #374151; }
         
         input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 0.95rem;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-radius: 6px;
+            font-size: 0.9rem;
         }
 
         .radio-option {
             display: flex;
             align-items: center;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            border-radius: 6px;
+            margin-bottom: 5px;
             cursor: pointer;
+            font-size: 0.9rem;
         }
-        .radio-option input { width: auto; margin-right: 12px; }
-
-        .note {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
+        .radio-option input { width: auto; margin-right: 10px; }
 
         .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 24px;
+            padding: 12px 20px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             border: none;
             width: 100%;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: 0.2s;
+            margin-top: 10px;
         }
 
         .btn-primary { background: var(--primary); color: white; }
-        .btn-admin { background: #10b981; color: white; margin-top: 20px; }
-        .btn-secondary { background: #6b7280; color: white; margin-top: 10px; }
-        .btn:disabled { opacity: 0.5; }
+        .btn-admin { background: #10b981; color: white; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        .message { padding: 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+        .message { padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; font-size: 0.9rem; }
         .message.show { display: block; }
         .message.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
         .message.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-        /* Admin Styles */
-        .response-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .data-row { display: flex; border-bottom: 1px solid #f3f4f6; padding: 8px 0; }
-        .data-label { width: 180px; font-weight: 600; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; }
-        .data-val { flex: 1; font-size: 0.9rem; word-break: break-all; }
-        .img-preview { max-width: 120px; border-radius: 4px; margin-top: 5px; border: 1px solid #ddd; }
+        .response-card { background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+        .data-row { display: flex; border-bottom: 1px solid #f3f4f6; padding: 6px 0; font-size: 0.85rem; }
+        .data-label { width: 150px; font-weight: 700; color: var(--text-light); }
+        .img-preview { max-width: 100px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; }
         
-        @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <!-- Member Form Page -->
+    <!-- MEMBER FORM PAGE -->
     <div id="formPage" class="page active">
         <div class="container">
             <h1>Bio-Info System</h1>
@@ -147,37 +128,25 @@
             
             <form id="bioInfoForm">
                 <div class="section">
-                    <span class="section-title">Personal Information</span>
+                    <span class="section-title">1. Personal Info</span>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label>Full Name *</label>
-                            <input type="text" id="fullName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email *</label>
-                            <input type="email" id="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone *</label>
-                            <input type="tel" id="phone" required>
-                        </div>
+                        <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" required></div>
+                        <div class="form-group"><label>Email *</label><input type="email" id="email" required></div>
+                        <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
                         <div class="form-group">
                             <label>Discipline *</label>
                             <select id="discipline" required>
                                 <option value="">Select...</option>
-                                <option>Engineering</option>
-                                <option>Computer Science</option>
-                                <option>Health Sciences</option>
-                                <option>Physical Sciences</option>
-                                <option>Social Sciences</option>
-                                <option>Other</option>
+                                <option>Engineering</option><option>Computer Science</option>
+                                <option>Health Sciences</option><option>Physical Sciences</option>
+                                <option>Social Sciences</option><option>Other</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="section">
-                    <span class="section-title">Manuscript Details</span>
+                    <span class="section-title">2. Manuscript & Group</span>
                     <div class="form-group">
                         <label>Who wrote it? *</label>
                         <label class="radio-option"><input type="radio" name="manuscript_writer" value="Copied Online" required> Copied Online</label>
@@ -185,122 +154,98 @@
                         <label class="radio-option"><input type="radio" name="manuscript_writer" value="Hired Professional"> Hired Professional</label>
                     </div>
                     <div class="form-group">
-                        <label>Writing competence score *</label>
-                        <label class="radio-option"><input type="radio" name="competence_score" value="Less than 10" required> Less than 10</label>
-                        <label class="radio-option"><input type="radio" name="competence_score" value="Over 10"> Over 10</label>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <span class="section-title">Referral & Duration</span>
-                    <div class="form-group">
                         <label>Referrer Info</label>
-                        <textarea id="referral" rows="2"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Group Duration *</label>
-                        <select id="group_duration" required>
-                            <option value="">Select...</option>
-                            <option>A year or more</option>
-                            <option>6 months or less</option>
-                            <option>Less than 2 months</option>
-                        </select>
+                        <textarea id="referral" rows="2" placeholder="Name/Number of person who recommended you"></textarea>
                     </div>
                 </div>
 
                 <div class="section">
-                    <span class="section-title">Journal & Sourcing</span>
+                    <span class="section-title">3. Journal Details</span>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label>Co-authors count *</label>
-                            <input type="number" id="coauthors" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Charge per author</label>
-                            <input type="text" id="charge">
-                        </div>
+                        <div class="form-group"><label>Co-authors count *</label><input type="number" id="coauthors" required></div>
+                        <div class="form-group"><label>Charge per author</label><input type="text" id="charge"></div>
                     </div>
-                    <div class="note">Total accumulation limit is 150k.</div>
-                    <div class="form-group">
-                        <label>Journal Name *</label>
-                        <input type="text" id="journal" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Link & Justification *</label>
-                        <textarea id="journal_justification" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Acceptance Screenshot</label>
-                        <input type="file" id="acceptance_file" accept="image/*">
-                    </div>
-                </div>
-
-                <div class="section">
-                    <span class="section-title">Identity Verification</span>
-                    <div class="form-group">
-                        <label>LinkedIn URL *</label>
-                        <input type="url" id="linkedin" required>
-                    </div>
-                    <div class="form-group">
-                        <label>ID Card / NIN</label>
-                        <input type="file" id="id_file" accept="image/*">
+                    <div class="form-group"><label>Journal Name *</label><input type="text" id="journal" required></div>
+                    <div class="form-group"><label>LinkedIn URL *</label><input type="url" id="linkedin" required></div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Acceptance Proof</label><input type="file" id="acceptance_file" accept="image/*"></div>
+                        <div class="form-group"><label>ID Card (NIN)</label><input type="file" id="id_file" accept="image/*"></div>
                     </div>
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn btn-primary">Submit Application</button>
             </form>
-            <button class="btn btn-admin" onclick="showPage('loginPage')">Admin Login</button>
+            
+            <!-- Navigation Button (Note: type="button" is vital here) -->
+            <button type="button" class="btn btn-admin" onclick="showPage('loginPage')">Admin Dashboard</button>
         </div>
     </div>
 
-    <!-- Login Page -->
+    <!-- LOGIN PAGE -->
     <div id="loginPage" class="page">
         <div class="container" style="max-width: 400px;">
-            <h1>Admin Access</h1>
+            <h1>Admin Login</h1>
             <div id="loginMessage" class="message"></div>
             <form id="loginForm">
                 <div class="form-group"><label>Username</label><input type="text" id="username" required></div>
                 <div class="form-group"><label>Password</label><input type="password" id="password" required></div>
                 <button type="submit" class="btn btn-primary">Login</button>
-                <button type="button" class="btn btn-secondary" onclick="showPage('formPage')">Back</button>
+                <button type="button" class="btn btn-secondary" onclick="showPage('formPage')">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- Admin Dashboard -->
+    <!-- ADMIN DASHBOARD PAGE -->
     <div id="adminPage" class="page">
         <div class="container">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <h1>Submissions</h1>
-                <button onclick="showPage('formPage')" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">Logout</button>
+                <button type="button" onclick="showPage('formPage')" style="color:red; font-weight:bold; cursor:pointer; background:none; border:none;">Logout</button>
             </div>
             <div id="responsesContainer"></div>
         </div>
     </div>
 
     <script>
-        // Supabase Init
+        // 1. Supabase Setup
         const SUPABASE_URL = 'https://watrosnylvkiuvuptdtp.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdHJvc255bHZraXV2dXB0ZHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzE2NzEsImV4cCI6MjA4MjUwNzY3MX0.ku6_Ngf2JRJ8fxLs_Q-EySgCU37MjUK3WofpO9bazds';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // UI Helpers
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if (id === 'adminPage') loadData();
+        // 2. Navigation Logic
+        function showPage(pageId) {
+            console.log("Switching to page:", pageId); // Helpful for debugging
+            
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+            
+            // Show the requested page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                window.scrollTo(0,0);
+            } else {
+                console.error("Page ID not found:", pageId);
+            }
+
+            // If going to admin dashboard, load data
+            if (pageId === 'adminPage') {
+                loadAdminData();
+            }
         }
 
+        // 3. Helper: Convert image to text
         async function toBase64(file) {
             if (!file) return null;
-            return new Promise((res) => {
-                const r = new FileReader();
-                r.readAsDataURL(file);
-                r.onload = () => res(r.result);
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(file);
             });
         }
 
-        // Logic: Submit Form
+        // 4. Form Submission
         document.getElementById('bioInfoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -314,13 +259,9 @@
                     pub_phone: document.getElementById('phone').value,
                     pub_discipline: document.getElementById('discipline').value,
                     pub_manuscript_writer: document.querySelector('input[name="manuscript_writer"]:checked').value,
-                    pub_competence_score: document.querySelector('input[name="competence_score"]:checked').value,
                     pub_referral: document.getElementById('referral').value,
-                    pub_group_duration: document.getElementById('group_duration').value,
                     pub_coauthors_count: parseInt(document.getElementById('coauthors').value),
-                    pub_charge_per_author: document.getElementById('charge').value,
                     pub_journal_name: document.getElementById('journal').value,
-                    pub_journal_justification: document.getElementById('journal_justification').value,
                     pub_linkedin_profile: document.getElementById('linkedin').value,
                     pub_acceptance_evidence: await toBase64(document.getElementById('acceptance_file').files[0]),
                     pub_id_document: await toBase64(document.getElementById('id_file').files[0]),
@@ -330,55 +271,68 @@
                 const { error } = await supabase.from('pub_bio_info_submissions').insert([payload]);
                 if (error) throw error;
 
-                document.getElementById('formMessage').textContent = "Submitted successfully!";
-                document.getElementById('formMessage').className = "message success show";
+                const msg = document.getElementById('formMessage');
+                msg.textContent = "Application Submitted Successfully!";
+                msg.className = "message success show";
                 e.target.reset();
             } catch (err) {
-                alert(err.message);
+                alert("Error: " + err.message);
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Submit Application';
             }
         });
 
-        // Logic: Admin Login
+        // 5. Admin Login Logic
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            if (document.getElementById('username').value === 'publication' && document.getElementById('password').value === 'publication') {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+
+            if (u === 'publication' && p === 'publication') {
                 showPage('adminPage');
             } else {
-                alert("Wrong login");
+                const logMsg = document.getElementById('loginMessage');
+                logMsg.textContent = "Invalid Login Credentials";
+                logMsg.className = "message error show";
             }
         });
 
-        // Logic: Admin Load
-        async function loadData() {
+        // 6. Load Admin Data
+        async function loadAdminData() {
             const container = document.getElementById('responsesContainer');
-            container.innerHTML = "Loading...";
-            
-            const { data, error } = await supabase.from('pub_bio_info_submissions').select('*').order('pub_submitted_at', { ascending: false });
-            
-            if (error) return container.innerHTML = "Error: " + error.message;
+            container.innerHTML = "<p>Loading records...</p>";
+
+            const { data, error } = await supabase
+                .from('pub_bio_info_submissions')
+                .select('*')
+                .order('pub_submitted_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = "<p>Error: " + error.message + "</p>";
+                return;
+            }
+
+            if (data.length === 0) {
+                container.innerHTML = "<p>No submissions found yet.</p>";
+                return;
+            }
 
             container.innerHTML = data.map(row => `
                 <div class="response-card">
-                    <div style="font-weight:bold; border-bottom:1px solid #eee; margin-bottom:10px;">${row.pub_full_name}</div>
-                    ${rowBuilder('Email', row.pub_email)}
-                    ${rowBuilder('Journal', row.pub_journal_name)}
-                    ${rowBuilder('LinkedIn', `<a href="${row.pub_linkedin_profile}" target="_blank">View</a>`)}
+                    <div class="data-row"><div class="data-label">NAME</div><div class="data-val">${row.pub_full_name}</div></div>
+                    <div class="data-row"><div class="data-label">EMAIL</div><div class="data-val">${row.pub_email}</div></div>
+                    <div class="data-row"><div class="data-label">JOURNAL</div><div class="data-val">${row.pub_journal_name}</div></div>
+                    <div class="data-row"><div class="data-label">LINKEDIN</div><div class="data-val"><a href="${row.pub_linkedin_profile}" target="_blank">View Profile</a></div></div>
                     <div class="data-row">
-                        <div class="data-label">Files</div>
+                        <div class="data-label">FILES</div>
                         <div class="data-val">
-                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview">` : ''}
-                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview">` : ''}
+                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview">` : 'No Acceptance Image'}
+                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview">` : 'No ID Image'}
                         </div>
                     </div>
                 </div>
             `).join('');
-        }
-
-        function rowBuilder(label, val) {
-            return `<div class="data-row"><div class="data-label">${label}</div><div class="data-val">${val}</div></div>`;
         }
     </script>
 </body>
