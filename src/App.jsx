@@ -43,15 +43,7 @@ const App = () => {
     const file = files[0];
     
     if (file) {
-      // Updated Limit: 110KB (110 * 1024 bytes)
-      const limit = 110 * 1024;
-      if (file.size > limit) {
-        alert(`File is too large (${(file.size / 1024).toFixed(1)}KB). The maximum allowed size is 110KB. Please compress your file.`);
-        e.target.value = ""; // Clear the input
-        setFormData(prev => ({ ...prev, [name]: null }));
-        return;
-      }
-
+      // LIMIT REMOVED as requested
       const reader = new FileReader();
       reader.onloadend = () => setFormData(prev => ({ ...prev, [name]: reader.result }));
       reader.readAsDataURL(file);
@@ -116,7 +108,7 @@ const App = () => {
     <div style={s.body}>
       <div style={s.card}>
         <div style={s.counter}>
-          <span style={{color:'#4f46e5'}}>{totalSubmissions}/100</span> — When reach 100 contact administrator to upgrade
+          <span style={{color:'#4f46e5'}}>{totalSubmissions}/10</span> — When reach 10 contact administrator to upgrade
         </div>
 
         <header style={s.header}>
@@ -198,13 +190,13 @@ const App = () => {
               </div>
               <label style={s.label}>Justify why you are using the journal and drop the journal link.</label>
               <textarea style={{...s.input, minHeight:'80px'}} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea>
-              <label style={s.label}>Screenshot and upload evidence of Acceptance (Max 110KB)</label>
+              <label style={s.label}>Screenshot and upload evidence of Acceptance</label>
               <input type="file" name="pub_acceptance_evidence" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
             </div>
 
             <div style={s.section}>
               <h2 style={s.secHead}>Info about means of Identification</h2>
-              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport (optional - Max 110KB)</label>
+              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport ( optional)</label>
               <input type="file" name="pub_id_document" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
               <label style={s.label}>Drop the link of your LinkedIn profile. (Compulsory)</label>
               <input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/..." />
@@ -212,7 +204,7 @@ const App = () => {
 
             <div style={s.section}>
               <h2 style={s.secHead}>Submit the Manuscript</h2>
-              <label style={s.label}>Upload (Max 110KB)</label>
+              <label style={s.label}>Upload</label>
               <input type="file" name="pub_manuscript_file" required onChange={handleFileChange} style={{marginBottom:'25px'}} />
             </div>
 
