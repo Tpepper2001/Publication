@@ -176,7 +176,7 @@
                 <button type="submit" id="submitBtn" class="btn btn-primary">Submit Application</button>
             </form>
             
-            <!-- Navigation Button (Note: type="button" is vital here) -->
+            <!-- Navigation Button - FIXED: Added type="button" -->
             <button type="button" class="btn btn-admin" onclick="showPage('loginPage')">Admin Dashboard</button>
         </div>
     </div>
@@ -214,7 +214,7 @@
 
         // 2. Navigation Logic
         function showPage(pageId) {
-            console.log("Switching to page:", pageId); // Helpful for debugging
+            console.log("Switching to page:", pageId);
             
             // Hide all pages
             const pages = document.querySelectorAll('.page');
@@ -322,13 +322,19 @@
                 <div class="response-card">
                     <div class="data-row"><div class="data-label">NAME</div><div class="data-val">${row.pub_full_name}</div></div>
                     <div class="data-row"><div class="data-label">EMAIL</div><div class="data-val">${row.pub_email}</div></div>
+                    <div class="data-row"><div class="data-label">PHONE</div><div class="data-val">${row.pub_phone}</div></div>
+                    <div class="data-row"><div class="data-label">DISCIPLINE</div><div class="data-val">${row.pub_discipline}</div></div>
+                    <div class="data-row"><div class="data-label">MANUSCRIPT BY</div><div class="data-val">${row.pub_manuscript_writer}</div></div>
+                    <div class="data-row"><div class="data-label">REFERRAL</div><div class="data-val">${row.pub_referral || 'N/A'}</div></div>
+                    <div class="data-row"><div class="data-label">CO-AUTHORS</div><div class="data-val">${row.pub_coauthors_count}</div></div>
                     <div class="data-row"><div class="data-label">JOURNAL</div><div class="data-val">${row.pub_journal_name}</div></div>
                     <div class="data-row"><div class="data-label">LINKEDIN</div><div class="data-val"><a href="${row.pub_linkedin_profile}" target="_blank">View Profile</a></div></div>
+                    <div class="data-row"><div class="data-label">SUBMITTED</div><div class="data-val">${new Date(row.pub_submitted_at).toLocaleString()}</div></div>
                     <div class="data-row">
                         <div class="data-label">FILES</div>
                         <div class="data-val">
-                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview">` : 'No Acceptance Image'}
-                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview">` : 'No ID Image'}
+                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview" alt="Acceptance">` : 'No Acceptance Image'}
+                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview" alt="ID">` : 'No ID Image'}
                         </div>
                     </div>
                 </div>
