@@ -11,12 +11,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const App = () => {
-  const [view, setView] = useState('form'); // form, login, admin
+  const [view, setView] = useState('form'); 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [submissions, setSubmissions] = useState([]);
 
-  // Full form state with all fields
   const [formData, setFormData] = useState({
     pub_full_name: '',
     pub_email: '',
@@ -37,15 +36,13 @@ const App = () => {
     pub_id_document: null
   });
 
-  // Clear messages after 5 seconds
   useEffect(() => {
     if (message.text) {
-      const timer = setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+      const timer = setTimeout(() => setMessage({ text: '', type: '' }), 6000);
       return () => clearTimeout(timer);
     }
   }, [message]);
 
-  // Handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -54,8 +51,8 @@ const App = () => {
   const handleFileChange = async (e) => {
     const { name, files } = e.target;
     if (files[0]) {
-      if (files[0].size > 1024 * 1024) {
-        alert("File is too large. Please upload an image under 1MB.");
+      if (files[0].size > 1.5 * 1024 * 1024) {
+        alert("File too large. Please use an image under 1.5MB");
         e.target.value = "";
         return;
       }
@@ -94,14 +91,14 @@ const App = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const u = e.target.username.value.trim();
+    const u = e.target.username.value.trim().toLowerCase();
     const p = e.target.password.value.trim();
 
     if (u === 'publication' && p === 'publication') {
       setView('admin');
       fetchSubmissions();
     } else {
-      setMessage({ text: 'Invalid Credentials. Try again.', type: 'error' });
+      setMessage({ text: 'Invalid Credentials. Use "publication" for both fields.', type: 'error' });
     }
   };
 
@@ -114,201 +111,182 @@ const App = () => {
 
   // --- Styles ---
   const styles = {
-    body: { backgroundColor: '#f4f7f6', minHeight: '100vh', padding: '20px', fontFamily: '"Inter", sans-serif' },
-    card: { maxWidth: '850px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', padding: '40px', overflow: 'hidden' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px' },
-    title: { display: 'flex', alignItems: 'center', gap: '12px', fontSize: '26px', fontWeight: '800', color: '#2d3748' },
-    section: { marginBottom: '35px', padding: '25px', border: '1px solid #edf2f7', borderRadius: '12px', backgroundColor: '#fafbfc' },
-    secTitle: { fontSize: '18px', fontWeight: '700', color: '#4a5568', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', color: '#4f46e5' },
-    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' },
-    label: { display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#4a5568' },
-    input: { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e0', fontSize: '15px', outline: 'none', transition: 'border 0.2s', boxSizing: 'border-box' },
-    textarea: { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e0', fontSize: '15px', minHeight: '80px', fontFamily: 'inherit', boxSizing: 'border-box' },
-    radioGroup: { display: 'flex', flexDirection: 'column', gap: '10px' },
-    radioItem: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '14px', cursor: 'pointer' },
-    btnPrimary: { backgroundColor: '#4f46e5', color: '#fff', padding: '16px 24px', borderRadius: '10px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer', width: '100%', transition: '0.3s' },
-    btnSecondary: { backgroundColor: 'transparent', color: '#4f46e5', border: '1px solid #4f46e5', padding: '8px 16px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' },
-    alert: (type) => ({ padding: '15px', borderRadius: '8px', marginBottom: '20px', backgroundColor: type === 'success' ? '#def7ec' : '#fde8e8', color: type === 'success' ? '#03543f' : '#9b1c1c', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '10px' }),
-    note: { fontSize: '13px', color: '#856404', backgroundColor: '#fff3cd', padding: '12px', borderRadius: '6px', borderLeft: '4px solid #ffc107', margin: '15px 0' },
-    adminCard: { padding: '20px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '15px', backgroundColor: '#fff' }
+    body: { backgroundColor: '#f3f4f6', minHeight: '100vh', padding: '20px', fontFamily: '"Inter", sans-serif' },
+    card: { maxWidth: '850px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', padding: '35px' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' },
+    title: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '24px', fontWeight: '800', color: '#111827' },
+    section: { marginBottom: '30px', padding: '20px', border: '1px solid #f3f4f6', borderRadius: '10px', backgroundColor: '#fafafa' },
+    secTitle: { fontSize: '17px', fontWeight: '700', color: '#4f46e5', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' },
+    grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' },
+    label: { display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '6px', color: '#374151' },
+    input: { width: '100%', padding: '11px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', boxSizing: 'border-box' },
+    textarea: { width: '100%', padding: '11px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '14px', minHeight: '70px', fontFamily: 'inherit', boxSizing: 'border-box' },
+    radioItem: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', marginBottom: '8px' },
+    btnPrimary: { backgroundColor: '#4f46e5', color: '#fff', padding: '15px', borderRadius: '8px', border: 'none', fontWeight: '700', cursor: 'pointer', width: '100%' },
+    btnSecondary: { backgroundColor: 'transparent', color: '#4f46e5', border: '1px solid #4f46e5', padding: '7px 14px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' },
+    alert: (type) => ({ padding: '12px', borderRadius: '6px', marginBottom: '20px', backgroundColor: type === 'success' ? '#f0fdf4' : '#fef2f2', color: type === 'success' ? '#166534' : '#991b1b', border: '1px solid currentColor' }),
+    note: { fontSize: '12px', color: '#92400e', backgroundColor: '#fffbeb', padding: '10px', borderRadius: '6px', borderLeft: '4px solid #f59e0b', margin: '10px 0' },
   };
 
   return (
     <div style={styles.body}>
       <style>{`
-        input:focus, textarea:focus, select:focus { border-color: #4f46e5 !important; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        .radio-item:hover { color: #4f46e5; }
+        input:focus, textarea:focus, select:focus { outline: 2px solid #4f46e5; border-color: transparent; }
+        button:active { transform: scale(0.98); }
       `}</style>
 
       <div style={styles.card}>
         <header style={styles.header}>
-          <div style={styles.title}><BookOpen size={30} color="#4f46e5" /> Publication Group Form</div>
+          <div style={styles.title}><BookOpen size={28} color="#4f46e5" /> Publication Group Form</div>
           {view === 'form' ? 
-            <button style={styles.btnSecondary} onClick={() => setView('login')}>Admin Access</button> : 
-            <button style={styles.btnSecondary} onClick={() => setView('form')}>Back to Form</button>
+            <button style={styles.btnSecondary} onClick={() => setView('login')}>Admin</button> : 
+            <button style={styles.btnSecondary} onClick={() => setView('form')}>Form</button>
           }
         </header>
 
-        {message.text && <div style={styles.alert(message.type)}><Info size={18}/> {message.text}</div>}
+        {message.text && <div style={styles.alert(message.type)}>{message.text}</div>}
 
         {/* --- FORM VIEW --- */}
         {view === 'form' && (
           <form onSubmit={handleSubmit}>
-            {/* 1. Bio Info */}
+            
             <div style={styles.section}>
-              <div style={styles.secTitle}><User size={20} /> Bio-Info</div>
+              <div style={styles.secTitle}><User size={18} /> 1. Bio-Info</div>
               <div style={styles.grid}>
-                <div style={{marginBottom:'15px'}}><label style={styles.label}>Full Name *</label><input style={styles.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} /></div>
-                <div style={{marginBottom:'15px'}}><label style={styles.label}>Email Address *</label><input style={styles.input} type="email" name="pub_email" required onChange={handleInputChange} value={formData.pub_email} /></div>
-              </div>
-              <div style={styles.grid}>
-                <div style={{marginBottom:'15px'}}><label style={styles.label}>Phone Number *</label><input style={styles.input} type="tel" name="pub_phone" required onChange={handleInputChange} value={formData.pub_phone} /></div>
-                <div style={{marginBottom:'15px'}}>
+                <div style={{marginBottom:'10px'}}><label style={styles.label}>Full Name *</label><input style={styles.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} /></div>
+                <div style={{marginBottom:'10px'}}><label style={styles.label}>Email Address *</label><input style={styles.input} type="email" name="pub_email" required onChange={handleInputChange} value={formData.pub_email} /></div>
+                <div style={{marginBottom:'10px'}}><label style={styles.label}>Phone Number *</label><input style={styles.input} type="tel" name="pub_phone" required onChange={handleInputChange} value={formData.pub_phone} /></div>
+                <div style={{marginBottom:'10px'}}>
                   <label style={styles.label}>Discipline *</label>
                   <select style={styles.input} name="pub_discipline" required onChange={handleInputChange} value={formData.pub_discipline}>
-                    <option value="">Select Discipline</option>
+                    <option value="">Select...</option>
                     <option>Engineering</option><option>Computer Science</option><option>Health Sciences</option><option>Physical Sciences</option><option>Social Sciences</option><option>Other</option>
                   </select>
                 </div>
               </div>
             </div>
 
-            {/* 2. Manuscript Standards */}
             <div style={styles.section}>
-              <div style={styles.secTitle}><PenTool size={20} /> Manuscript Standard</div>
+              <div style={styles.secTitle}><PenTool size={18} /> 2. Manuscript Standard</div>
               <div style={styles.grid}>
-                <div style={{marginBottom:'15px'}}>
+                <div>
                   <label style={styles.label}>Who wrote the manuscript? *</label>
-                  <div style={styles.radioGroup}>
-                    {['Copied Online', 'Yourself', 'Hired a professional writer'].map(opt => (
-                      <label key={opt} style={styles.radioItem}><input type="radio" name="pub_manuscript_writer" value={opt} required onChange={handleInputChange} checked={formData.pub_manuscript_writer === opt}/> {opt}</label>
-                    ))}
-                  </div>
-                </div>
-                <div style={{marginBottom:'15px'}}>
-                  <label style={styles.label}>Research writing competence score *</label>
-                  <div style={styles.radioGroup}>
-                    {['Less than 10', 'Over 10'].map(opt => (
-                      <label key={opt} style={styles.radioItem}><input type="radio" name="pub_competence_score" value={opt} required onChange={handleInputChange} checked={formData.pub_competence_score === opt}/> {opt}</label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Origin Info */}
-            <div style={styles.section}>
-              <div style={styles.secTitle}><HelpCircle size={20} /> Author's Origin on Group</div>
-              <div style={{marginBottom:'20px'}}>
-                <label style={styles.label}>How did you hear about the group? *</label>
-                <div style={styles.radioGroup}>
-                  {['Recommendation by a strong member', 'Join via'].map(opt => (
-                    <label key={opt} style={styles.radioItem}><input type="radio" name="pub_group_source" value={opt} required onChange={handleInputChange} checked={formData.pub_group_source === opt}/> {opt}</label>
+                  {['Copied Online', 'Yourself', 'Professional Writer'].map(opt => (
+                    <label key={opt} style={styles.radioItem}><input type="radio" name="pub_manuscript_writer" value={opt} required onChange={handleInputChange} /> {opt}</label>
                   ))}
                 </div>
-              </div>
-              <div style={{marginBottom:'20px'}}>
-                <label style={styles.label}>Drop the name/number of referrer or group link source</label>
-                <textarea style={styles.textarea} name="pub_referral" onChange={handleInputChange} value={formData.pub_referral}></textarea>
-              </div>
-              <div style={{marginBottom:'15px'}}>
-                <label style={styles.label}>Months spent on the group? *</label>
-                <div style={styles.radioGroup}>
-                  {['A year or over a year', '6 months or less', 'Less than 2 months'].map(opt => (
-                    <label key={opt} style={styles.radioItem}><input type="radio" name="pub_group_duration" value={opt} required onChange={handleInputChange} checked={formData.pub_group_duration === opt}/> {opt}</label>
+                <div>
+                  <label style={styles.label}>Competence score (Research Writing) *</label>
+                  {['Less than 10', 'Over 10'].map(opt => (
+                    <label key={opt} style={styles.radioItem}><input type="radio" name="pub_competence_score" value={opt} required onChange={handleInputChange} /> {opt}</label>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* 4. Sourcing */}
             <div style={styles.section}>
-              <div style={styles.secTitle}><ImageIcon size={20} /> Sourcing Info</div>
+              <div style={styles.secTitle}><HelpCircle size={18} /> 3. Group Origin</div>
+              <label style={styles.label}>How did you hear about the group? *</label>
+              <div style={{display:'flex', gap:'20px', marginBottom:'15px'}}>
+                {['Recommendation', 'Join via Link'].map(opt => (
+                  <label key={opt} style={styles.radioItem}><input type="radio" name="pub_group_source" value={opt} required onChange={handleInputChange} /> {opt}</label>
+                ))}
+              </div>
+              <label style={styles.label}>Referrer details (Name/Number)</label>
+              <textarea style={styles.textarea} name="pub_referral" onChange={handleInputChange} value={formData.pub_referral} placeholder="Who recommended you?"></textarea>
+              <div style={{marginTop:'15px'}}>
+                <label style={styles.label}>Duration in group? *</label>
+                <select style={styles.input} name="pub_group_duration" required onChange={handleInputChange} value={formData.pub_group_duration}>
+                  <option value="">Select...</option>
+                  <option>A year or over a year</option><option>6 months or less</option><option>Less than 2 months</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={styles.section}>
+              <div style={styles.secTitle}><ImageIcon size={18} /> 4. Sourcing Info</div>
               <div style={styles.grid}>
-                <div><label style={styles.label}>Number of co-authors *</label><input style={styles.input} type="number" name="pub_coauthors_count" required onChange={handleInputChange} value={formData.pub_coauthors_count} /></div>
-                <div><label style={styles.label}>Charge per author</label><input style={styles.input} type="text" name="pub_charge_per_author" onChange={handleInputChange} value={formData.pub_charge_per_author} placeholder="e.g. 20k" /></div>
+                <div><label style={styles.label}>Co-authors count *</label><input style={styles.input} type="number" name="pub_coauthors_count" required onChange={handleInputChange} value={formData.pub_coauthors_count} /></div>
+                <div><label style={styles.label}>Charge per author</label><input style={styles.input} type="text" name="pub_charge_per_author" onChange={handleInputChange} value={formData.pub_charge_per_author} placeholder="e.g. 30,000" /></div>
               </div>
-              <div style={styles.note}><b>Note:</b> Total amount accumulated per paper cannot exceed 150k regardless of co-author count.</div>
+              <div style={styles.note}><b>Note:</b> Maximum accumulation per paper is 150k total.</div>
             </div>
 
-            {/* 5. Journal */}
             <div style={styles.section}>
-              <div style={styles.secTitle}><BookOpen size={20} /> Journal Info</div>
+              <div style={styles.secTitle}><BookOpen size={18} /> 5. Journal Information</div>
               <div style={styles.grid}>
                 <div><label style={styles.label}>Journal Name *</label><input style={styles.input} type="text" name="pub_journal_name" required onChange={handleInputChange} value={formData.pub_journal_name} /></div>
                 <div>
-                  <label style={styles.label}>Submitted & Accepted? *</label>
-                  <div style={{...styles.radioGroup, flexDirection:'row', gap:'20px', marginTop:'10px'}}>
-                    {['Yes', 'No'].map(opt => (
-                      <label key={opt} style={styles.radioItem}><input type="radio" name="pub_journal_accepted" value={opt} required onChange={handleInputChange} checked={formData.pub_journal_accepted === opt}/> {opt}</label>
-                    ))}
-                  </div>
+                   <label style={styles.label}>Is it accepted? *</label>
+                   <div style={{display:'flex', gap:'20px', marginTop:'10px'}}>
+                     {['Yes', 'No'].map(opt => (
+                       <label key={opt} style={styles.radioItem}><input type="radio" name="pub_journal_accepted" value={opt} required onChange={handleInputChange} /> {opt}</label>
+                     ))}
+                   </div>
                 </div>
               </div>
-              <div style={{marginTop:'20px'}}>
-                <label style={styles.label}>Journal Link & Justification *</label>
-                <textarea style={styles.textarea} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification} placeholder="Explain why this journal and paste link..."></textarea>
+              <div style={{marginTop:'15px'}}>
+                <label style={styles.label}>Justification & Journal Link *</label>
+                <textarea style={styles.textarea} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea>
+              </div>
+              {/* Evidence moved here */}
+              <div style={{marginTop:'15px', padding:'15px', border:'1px dashed #cbd5e0', borderRadius:'8px'}}>
+                <label style={styles.label}>Evidence of Acceptance (Screenshot)</label>
+                <input type="file" accept="image/*" name="pub_acceptance_evidence" onChange={handleFileChange} />
               </div>
             </div>
 
-            {/* 6. ID & Verification */}
             <div style={styles.section}>
-              <div style={styles.secTitle}><ShieldCheck size={20} /> Identification</div>
-              <div style={{marginBottom:'20px'}}><label style={styles.label}>LinkedIn Profile URL *</label><input style={styles.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/yourname" /></div>
-              <div style={styles.grid}>
-                <div><label style={styles.label}>Acceptance Evidence (Image)</label><input type="file" accept="image/*" name="pub_acceptance_evidence" onChange={handleFileChange} /></div>
-                <div><label style={styles.label}>ID Document (NIN/Passport)</label><input type="file" accept="image/*" name="pub_id_document" onChange={handleFileChange} /></div>
+              <div style={styles.secTitle}><ShieldCheck size={18} /> 6. Verification</div>
+              <label style={styles.label}>LinkedIn Profile URL *</label>
+              <input style={styles.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/..." />
+              <div style={{marginTop:'15px'}}>
+                <label style={styles.label}>ID Document (NIN/Passport/Photograph)</label>
+                <input type="file" accept="image/*" name="pub_id_document" onChange={handleFileChange} />
               </div>
             </div>
 
-            <button type="submit" disabled={loading} style={{...styles.btnPrimary, backgroundColor: loading ? '#a5a6f6' : '#4f46e5'}}>
-              {loading ? 'Processing...' : 'Submit Publication Form'}
+            <button type="submit" disabled={loading} style={{...styles.btnPrimary, opacity: loading ? 0.7 : 1}}>
+              {loading ? 'Submitting Application...' : 'Submit Publication Form'}
             </button>
           </form>
         )}
 
         {/* --- LOGIN VIEW --- */}
         {view === 'login' && (
-          <div style={{maxWidth:'400px', margin:'40px auto', textAlign:'center'}}>
-            <h2 style={{marginBottom:'25px'}}>Admin Dashboard Login</h2>
+          <div style={{maxWidth:'380px', margin:'50px auto'}}>
+            <h2 style={{textAlign:'center', marginBottom:'30px'}}>Admin Dashboard Login</h2>
             <form onSubmit={handleLogin}>
-              <div style={{textAlign:'left', marginBottom:'15px'}}><label style={styles.label}>Username</label><input style={styles.input} type="text" name="username" required /></div>
-              <div style={{textAlign:'left', marginBottom:'25px'}}><label style={styles.label}>Password</label><input style={styles.input} type="password" name="password" required /></div>
+              <div style={{marginBottom:'15px'}}><label style={styles.label}>Username</label><input style={styles.input} type="text" name="username" required /></div>
+              <div style={{marginBottom:'25px'}}><label style={styles.label}>Password</label><input style={styles.input} type="password" name="password" required /></div>
               <button style={styles.btnPrimary}>Login</button>
             </form>
-            <p style={{fontSize:'12px', color:'#718096', marginTop:'20px'}}>Credentials are "publication" / "publication"</p>
           </div>
         )}
 
         {/* --- ADMIN DASHBOARD --- */}
         {view === 'admin' && (
           <div>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'25px'}}>
               <h2 style={{display:'flex', alignItems:'center', gap:'10px'}}><ShieldCheck color="#10b981"/> Admin Dashboard</h2>
               <button style={{...styles.btnSecondary, color:'red', borderColor:'red'}} onClick={() => setView('form')}>Logout</button>
             </div>
-            
-            {loading ? <p>Loading submissions...</p> : submissions.length === 0 ? <p>No submissions found.</p> : (
+            {loading ? <p>Loading data...</p> : (
               <div style={{display:'flex', flexDirection:'column', gap:'15px'}}>
                 {submissions.map(sub => (
-                  <div key={sub.id} style={styles.adminCard}>
-                    <div style={{display:'flex', justifyContent:'space-between', borderBottom:'1px solid #f0f0f0', paddingBottom:'10px', marginBottom:'15px'}}>
-                      <span style={{fontWeight:'700', color:'#2d3748'}}>{sub.pub_full_name}</span>
-                      <span style={{fontSize:'12px', color:'#a0aec0'}}>{new Date(sub.pub_submitted_at).toLocaleString()}</span>
+                  <div key={sub.id} style={{padding:'20px', border:'1px solid #e5e7eb', borderRadius:'10px', backgroundColor:'#fff'}}>
+                    <div style={{display:'flex', justifyContent:'space-between', marginBottom:'10px', borderBottom:'1px solid #f3f4f6', paddingBottom:'10px'}}>
+                      <span style={{fontWeight:'700'}}>{sub.pub_full_name}</span>
+                      <span style={{fontSize:'12px', color:'#9ca3af'}}>{new Date(sub.pub_submitted_at).toLocaleDateString()}</span>
                     </div>
-                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', fontSize:'13px', color:'#4a5568'}}>
-                      <p><b>Email:</b> {sub.pub_email}</p>
-                      <p><b>Phone:</b> {sub.pub_phone}</p>
-                      <p><b>Discipline:</b> {sub.pub_discipline}</p>
-                      <p><b>Journal:</b> {sub.pub_journal_name}</p>
-                      <p><b>Co-authors:</b> {sub.pub_coauthors_count}</p>
-                      <p><b>Writer:</b> {sub.pub_manuscript_writer}</p>
+                    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px', fontSize:'13px'}}>
+                       <p><b>Email:</b> {sub.pub_email}</p><p><b>Phone:</b> {sub.pub_phone}</p>
+                       <p><b>Journal:</b> {sub.pub_journal_name}</p><p><b>Accepted:</b> {sub.pub_journal_accepted}</p>
                     </div>
-                    <div style={{marginTop:'15px', display:'flex', gap:'10px'}}>
-                       {sub.pub_acceptance_evidence && <div style={{textAlign:'center'}}><p style={{fontSize:'10px'}}>Acceptance</p><img src={sub.pub_acceptance_evidence} style={{width:'80px', height:'60px', objectFit:'cover', borderRadius:'4px', border:'1px solid #eee'}} /></div>}
-                       {sub.pub_id_document && <div style={{textAlign:'center'}}><p style={{fontSize:'10px'}}>ID Card</p><img src={sub.pub_id_document} style={{width:'80px', height:'60px', objectFit:'cover', borderRadius:'4px', border:'1px solid #eee'}} /></div>}
-                       <div style={{marginLeft:'auto', alignSelf:'flex-end'}}><a href={sub.pub_linkedin_profile} target="_blank" rel="noreferrer" style={{color:'#4f46e5', fontWeight:'700', fontSize:'13px'}}>View LinkedIn</a></div>
+                    <div style={{marginTop:'12px', display:'flex', gap:'10px'}}>
+                       {sub.pub_acceptance_evidence && <img src={sub.pub_acceptance_evidence} style={{width:'70px', height:'50px', objectFit:'cover', borderRadius:'4px', border:'1px solid #eee'}} alt="Acceptance"/>}
+                       {sub.pub_id_document && <img src={sub.pub_id_document} style={{width:'70px', height:'50px', objectFit:'cover', borderRadius:'4px', border:'1px solid #eee'}} alt="ID"/>}
+                       <a href={sub.pub_linkedin_profile} target="_blank" rel="noreferrer" style={{marginLeft:'auto', alignSelf:'flex-end', fontSize:'13px', color:'#4f46e5', fontWeight:'600'}}>LinkedIn</a>
                     </div>
                   </div>
                 ))}
