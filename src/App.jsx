@@ -15,6 +15,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [submissions, setSubmissions] = useState([]);
+  const [totalSubmissions, setTotalSubmissions] = useState(0); // Counter State
 
   const [formData, setFormData] = useState({
     pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '',
@@ -24,6 +25,18 @@ const App = () => {
     pub_journal_justification: '', pub_linkedin_profile: '',
     pub_acceptance_evidence: null, pub_id_document: null
   });
+
+  // Fetch count on load
+  useEffect(() => {
+    fetchSubmissionCount();
+  }, []);
+
+  const fetchSubmissionCount = async () => {
+    const { count, error } = await supabase
+      .from('pub_bio_info_submissions')
+      .select('*', { count: 'exact', head: true });
+    if (!error) setTotalSubmissions(count || 0);
+  };
 
   useEffect(() => {
     if (message.text) {
@@ -59,6 +72,7 @@ const App = () => {
         pub_journal_name: '', pub_journal_accepted: '', pub_journal_justification: '', pub_linkedin_profile: '', 
         pub_acceptance_evidence: null, pub_id_document: null
       });
+      fetchSubmissionCount(); // Update counter after submission
       window.scrollTo(0, 0);
     } catch (err) { setMessage({ text: err.message, type: 'error' }); } finally { setLoading(false); }
   };
@@ -74,15 +88,19 @@ const App = () => {
   const fetchSubmissions = async () => {
     setLoading(true);
     const { data, error } = await supabase.from('pub_bio_info_submissions').select('*').order('pub_submitted_at', { ascending: false });
-    if (!error) setSubmissions(data);
+    if (!error) {
+        setSubmissions(data);
+        setTotalSubmissions(data.length);
+    }
     setLoading(false);
   };
 
   // --- Styles ---
   const s = {
     body: { backgroundColor: '#f3f4f6', minHeight: '100vh', padding: '20px', fontFamily: '"Inter", sans-serif' },
-    card: { maxWidth: '900px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', padding: '35px' },
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px' },
+    card: { maxWidth: '900px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', padding: '35px', position: 'relative' },
+    counterBox: { position: 'absolute', top: '10px', left: '20px', fontSize: '11px', fontWeight: '700', color: '#6b7280' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', borderBottom: '1px solid #eee', paddingBottom: '15px', marginTop: '10px' },
     title: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '22px', fontWeight: '800', color: '#111827' },
     section: { marginBottom: '30px', padding: '20px', border: '1px solid #f3f4f6', borderRadius: '10px', backgroundColor: '#fafafa' },
     secTitle: { fontSize: '16px', fontWeight: '700', color: '#4f46e5', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' },
@@ -101,6 +119,11 @@ const App = () => {
   return (
     <div style={s.body}>
       <div style={s.card}>
+        {/* COUNTER TOP LEFT */}
+        <div style={s.counterBox}>
+            <span style={{color: '#4f46e5'}}>{totalSubmissions}/100</span> — When reach 100 contact administrator to upgrade
+        </div>
+
         <header style={s.header}>
           <div style={s.title}><BookOpen size={26} color="#4f46e5" /> Publication Group Form</div>
           <button style={s.btnSec} onClick={() => view === 'admin' || view === 'login' ? setView('form') : setView('login')}>
@@ -116,46 +139,46 @@ const App = () => {
             <div style={s.section}>
               <div style={s.secTitle}><User size={18} /> 1. Personal & Discipline</div>
               <div style={s.grid}>
-                <div><label style={s.label}>Full Name *</label><input style={s.input} type="text" name="pub_full_name" required onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Email Address *</label><input style={s.input} type="email" name="pub_email" required onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Phone Number *</label><input style={s.input} type="tel" name="pub_phone" required onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Discipline *</label><input style={s.input} name="pub_discipline" required onChange={handleInputChange} placeholder="e.g. Engineering" /></div>
+                <div><label style={s.label}>Full Name *</label><input style={s.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} /></div>
+                <div><label style={s.label}>Email Address *</label><input style={s.input} type="email" name="pub_email" required onChange={handleInputChange} value={formData.pub_email} /></div>
+                <div><label style={s.label}>Phone Number *</label><input style={s.input} type="tel" name="pub_phone" required onChange={handleInputChange} value={formData.pub_phone} /></div>
+                <div><label style={s.label}>Discipline *</label><input style={s.input} name="pub_discipline" required onChange={handleInputChange} value={formData.pub_discipline} placeholder="e.g. Engineering" /></div>
               </div>
             </div>
 
             <div style={s.section}>
               <div style={s.secTitle}><PenTool size={18} /> 2. Manuscript & Competence</div>
               <div style={s.grid}>
-                <div><label style={s.label}>Who wrote it? *</label><select style={s.input} name="pub_manuscript_writer" required onChange={handleInputChange}><option value="">Select...</option><option>Copied Online</option><option>Yourself</option><option>Professional</option></select></div>
-                <div><label style={s.label}>Writing Competence Score *</label><select style={s.input} name="pub_competence_score" required onChange={handleInputChange}><option value="">Select...</option><option>Less than 10</option><option>Over 10</option></select></div>
+                <div><label style={s.label}>Who wrote it? *</label><select style={s.input} name="pub_manuscript_writer" required onChange={handleInputChange} value={formData.pub_manuscript_writer}><option value="">Select...</option><option>Copied Online</option><option>Yourself</option><option>Professional</option></select></div>
+                <div><label style={s.label}>Writing Competence Score *</label><select style={s.input} name="pub_competence_score" required onChange={handleInputChange} value={formData.pub_competence_score}><option value="">Select...</option><option>Less than 10</option><option>Over 10</option></select></div>
               </div>
             </div>
 
             <div style={s.section}>
               <div style={s.secTitle}><HelpCircle size={18} /> 3. Group Origin & Referrer</div>
               <div style={s.grid}>
-                <div><label style={s.label}>How did you hear about us? *</label><select style={s.input} name="pub_group_source" required onChange={handleInputChange}><option value="">Select...</option><option>Recommendation</option><option>Join via Link</option></select></div>
-                <div><label style={s.label}>Months spent in group? *</label><select style={s.input} name="pub_group_duration" required onChange={handleInputChange}><option value="">Select...</option><option>A year or more</option><option>6 months or less</option><option>Less than 2 months</option></select></div>
+                <div><label style={s.label}>How did you hear about us? *</label><select style={s.input} name="pub_group_source" required onChange={handleInputChange} value={formData.pub_group_source}><option value="">Select...</option><option>Recommendation</option><option>Join via Link</option></select></div>
+                <div><label style={s.label}>Months spent in group? *</label><select style={s.input} name="pub_group_duration" required onChange={handleInputChange} value={formData.pub_group_duration}><option value="">Select...</option><option>A year or more</option><option>6 months or less</option><option>Less than 2 months</option></select></div>
               </div>
-              <div style={{marginTop:'15px'}}><label style={s.label}>Referrer Name/Number</label><textarea style={{...s.input, minHeight:'60px'}} name="pub_referral" onChange={handleInputChange}></textarea></div>
+              <div style={{marginTop:'15px'}}><label style={s.label}>Referrer Name/Number</label><textarea style={{...s.input, minHeight:'60px'}} name="pub_referral" onChange={handleInputChange} value={formData.pub_referral}></textarea></div>
             </div>
 
             <div style={s.section}>
               <div style={s.secTitle}><DollarSign size={18} /> 4. Sourcing & Journal</div>
               <div style={s.grid}>
-                <div><label style={s.label}>Co-authors count *</label><input style={s.input} type="number" name="pub_coauthors_count" required onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Charge per author</label><input style={s.input} type="text" name="pub_charge_per_author" onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Journal Name *</label><input style={s.input} type="text" name="pub_journal_name" required onChange={handleInputChange} /></div>
-                <div><label style={s.label}>Already Accepted? *</label><select style={s.input} name="pub_journal_accepted" required onChange={handleInputChange}><option value="">Select...</option><option>Yes</option><option>No</option></select></div>
+                <div><label style={s.label}>Co-authors count *</label><input style={s.input} type="number" name="pub_coauthors_count" required onChange={handleInputChange} value={formData.pub_coauthors_count} /></div>
+                <div><label style={s.label}>Charge per author</label><input style={s.input} type="text" name="pub_charge_per_author" onChange={handleInputChange} value={formData.pub_charge_per_author} /></div>
+                <div><label style={s.label}>Journal Name *</label><input style={s.input} type="text" name="pub_journal_name" required onChange={handleInputChange} value={formData.pub_journal_name} /></div>
+                <div><label style={s.label}>Already Accepted? *</label><select style={s.input} name="pub_journal_accepted" required onChange={handleInputChange} value={formData.pub_journal_accepted}><option value="">Select...</option><option>Yes</option><option>No</option></select></div>
               </div>
-              <div style={{marginTop:'15px'}}><label style={s.label}>Journal Justification & Link *</label><textarea style={{...s.input, minHeight:'60px'}} name="pub_journal_justification" required onChange={handleInputChange}></textarea></div>
+              <div style={{marginTop:'15px'}}><label style={s.label}>Journal Justification & Link *</label><textarea style={{...s.input, minHeight:'60px'}} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea></div>
               <div style={{marginTop:'15px', padding:'15px', border:'1px dashed #ccc', borderRadius:'8px'}}><label style={s.label}>Evidence of Acceptance (Image)</label><input type="file" name="pub_acceptance_evidence" onChange={handleFileChange} accept="image/*" /></div>
             </div>
 
             <div style={s.section}>
               <div style={s.secTitle}><ShieldCheck size={18} /> 5. Verification</div>
               <div style={s.grid}>
-                <div><label style={s.label}>LinkedIn Profile URL *</label><input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} /></div>
+                <div><label style={s.label}>LinkedIn Profile URL *</label><input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} /></div>
                 <div><label style={s.label}>ID (NIN/Passport/Photo)</label><input type="file" name="pub_id_document" onChange={handleFileChange} accept="image/*" /></div>
               </div>
             </div>
