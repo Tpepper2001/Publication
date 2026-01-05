@@ -43,7 +43,14 @@ const App = () => {
     const file = files[0];
     
     if (file) {
-      // LIMIT REMOVED as requested
+      // 400KB Limit Check (400 * 1024 bytes)
+      const limit = 400 * 1024;
+      if (file.size > limit) {
+        alert(`File is too large (${(file.size / 1024).toFixed(1)}KB). The maximum allowed size is 400KB. Please compress your file before uploading.`);
+        e.target.value = ""; // Clear the input
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => setFormData(prev => ({ ...prev, [name]: reader.result }));
       reader.readAsDataURL(file);
@@ -99,7 +106,7 @@ const App = () => {
     radioBtn: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '15px' },
     note: { backgroundColor: '#fffbeb', color: '#92400e', padding: '15px', borderRadius: '8px', fontSize: '13px', fontStyle: 'italic', borderLeft: '4px solid #f59e0b', marginBottom: '25px' },
     btn: { width: '100%', padding: '16px', borderRadius: '10px', border: 'none', backgroundColor: '#4f46e5', color: '#fff', fontWeight: '700', fontSize: '16px', cursor: 'pointer' },
-    adminBox: { padding: '25px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '20px' },
+    adminBox: { padding: '25px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '20px', backgroundColor: '#fff' },
     dataLabel: { fontWeight: '700', color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', display: 'block' },
     img: { width: '120px', height: '80px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #e2e8f0', marginTop: '10px' }
   };
@@ -108,7 +115,7 @@ const App = () => {
     <div style={s.body}>
       <div style={s.card}>
         <div style={s.counter}>
-          <span style={{color:'#4f46e5'}}>{totalSubmissions}/10</span> — When reach 10 contact administrator to upgrade
+          <span style={{color:'#4f46e5'}}>{totalSubmissions}/35</span> — When reach 35 contact administrator to upgrade
         </div>
 
         <header style={s.header}>
@@ -190,13 +197,13 @@ const App = () => {
               </div>
               <label style={s.label}>Justify why you are using the journal and drop the journal link.</label>
               <textarea style={{...s.input, minHeight:'80px'}} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea>
-              <label style={s.label}>Screenshot and upload evidence of Acceptance</label>
+              <label style={s.label}>Screenshot and upload evidence of Acceptance (Max 400KB)</label>
               <input type="file" name="pub_acceptance_evidence" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
             </div>
 
             <div style={s.section}>
               <h2 style={s.secHead}>Info about means of Identification</h2>
-              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport ( optional)</label>
+              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport ( optional - Max 400KB)</label>
               <input type="file" name="pub_id_document" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
               <label style={s.label}>Drop the link of your LinkedIn profile. (Compulsory)</label>
               <input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/..." />
@@ -204,7 +211,7 @@ const App = () => {
 
             <div style={s.section}>
               <h2 style={s.secHead}>Submit the Manuscript</h2>
-              <label style={s.label}>Upload</label>
+              <label style={s.label}>Upload (Max 400KB)</label>
               <input type="file" name="pub_manuscript_file" required onChange={handleFileChange} style={{marginBottom:'25px'}} />
             </div>
 
@@ -239,7 +246,7 @@ const App = () => {
                   <div><span style={s.dataLabel}>Manuscript</span>{row.pub_manuscript_file ? '✅ Uploaded' : '❌ Missing'}</div>
                 </div>
                 <div style={{marginTop:'20px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', backgroundColor:'#f8fafc', padding:'15px', borderRadius:'8px'}}>
-                  <div><span style={s.dataLabel}>Origin Info</span>Source: {row.pub_group_source}<br/>Spent: {row.pub_group_duration}</div>
+                  <div><span style={s.dataLabel}>Origin Info</span>Source: {row.pub_group_source}<br/>Spent: {row.pub_group_duration}<br/>Referrer: {row.pub_referral || 'N/A'}</div>
                   <div><span style={s.dataLabel}>Sourcing Details</span>Co-Authors: {row.pub_coauthors_count}<br/>Charge: {row.pub_charge_per_author}</div>
                 </div>
                 <div style={{display:'flex', gap:'30px', marginTop:'20px', alignItems:'flex-end'}}>
