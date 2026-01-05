@@ -15,7 +15,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [submissions, setSubmissions] = useState([]);
-  const [totalSubmissions, setTotalSubmissions] = useState(0); // Counter State
+  const [totalSubmissions, setTotalSubmissions] = useState(0);
 
   const [formData, setFormData] = useState({
     pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '',
@@ -26,7 +26,6 @@ const App = () => {
     pub_acceptance_evidence: null, pub_id_document: null
   });
 
-  // Fetch count on load
   useEffect(() => {
     fetchSubmissionCount();
   }, []);
@@ -72,7 +71,7 @@ const App = () => {
         pub_journal_name: '', pub_journal_accepted: '', pub_journal_justification: '', pub_linkedin_profile: '', 
         pub_acceptance_evidence: null, pub_id_document: null
       });
-      fetchSubmissionCount(); // Update counter after submission
+      fetchSubmissionCount();
       window.scrollTo(0, 0);
     } catch (err) { setMessage({ text: err.message, type: 'error' }); } finally { setLoading(false); }
   };
@@ -81,8 +80,14 @@ const App = () => {
     e.preventDefault();
     const u = e.target.username.value.trim().toLowerCase();
     const p = e.target.password.value.trim();
-    if (u === 'publication' && p === 'publication') { setView('admin'); fetchSubmissions(); } 
-    else { setMessage({ text: 'Invalid Credentials', type: 'error' }); }
+    // Valid login check
+    if (u === 'publication' && p === 'publication') { 
+      setView('admin'); 
+      fetchSubmissions(); 
+    } 
+    else { 
+      setMessage({ text: 'Invalid Credentials', type: 'error' }); // Removed password reveal
+    }
   };
 
   const fetchSubmissions = async () => {
@@ -111,7 +116,6 @@ const App = () => {
     btnSec: { backgroundColor: 'transparent', color: '#4f46e5', border: '1px solid #4f46e5', padding: '6px 12px', borderRadius: '6px', fontWeight: '600', cursor: 'pointer', fontSize: '13px' },
     adminBox: { padding: '20px', border: '1px solid #e5e7eb', borderRadius: '12px', marginBottom: '20px', backgroundColor: '#fff' },
     adminGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' },
-    dataField: { fontSize: '13px', marginBottom: '5px' },
     dataLabel: { fontWeight: '700', color: '#6b7280', fontSize: '11px', textTransform: 'uppercase', display: 'block' },
     img: { width: '100px', height: '70px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #eee', marginTop: '5px' }
   };
@@ -119,7 +123,6 @@ const App = () => {
   return (
     <div style={s.body}>
       <div style={s.card}>
-        {/* COUNTER TOP LEFT */}
         <div style={s.counterBox}>
             <span style={{color: '#4f46e5'}}>{totalSubmissions}/100</span> — When reach 100 contact administrator to upgrade
         </div>
@@ -142,20 +145,20 @@ const App = () => {
                 <div><label style={s.label}>Full Name *</label><input style={s.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} /></div>
                 <div><label style={s.label}>Email Address *</label><input style={s.input} type="email" name="pub_email" required onChange={handleInputChange} value={formData.pub_email} /></div>
                 <div><label style={s.label}>Phone Number *</label><input style={s.input} type="tel" name="pub_phone" required onChange={handleInputChange} value={formData.pub_phone} /></div>
-                <div><label style={s.label}>Discipline *</label><input style={s.input} name="pub_discipline" required onChange={handleInputChange} value={formData.pub_discipline} placeholder="e.g. Engineering" /></div>
+                <div><label style={s.label}>Discipline *</label><input style={s.input} name="pub_discipline" required onChange={handleInputChange} value={formData.pub_discipline} /></div>
               </div>
             </div>
 
             <div style={s.section}>
-              <div style={s.secTitle}><PenTool size={18} /> 2. Manuscript & Competence</div>
+              <div style={s.secTitle}><PenTool size={18} /> 2. Manuscript Standard</div>
               <div style={s.grid}>
                 <div><label style={s.label}>Who wrote it? *</label><select style={s.input} name="pub_manuscript_writer" required onChange={handleInputChange} value={formData.pub_manuscript_writer}><option value="">Select...</option><option>Copied Online</option><option>Yourself</option><option>Professional</option></select></div>
-                <div><label style={s.label}>Writing Competence Score *</label><select style={s.input} name="pub_competence_score" required onChange={handleInputChange} value={formData.pub_competence_score}><option value="">Select...</option><option>Less than 10</option><option>Over 10</option></select></div>
+                <div><label style={s.label}>Competence Score *</label><select style={s.input} name="pub_competence_score" required onChange={handleInputChange} value={formData.pub_competence_score}><option value="">Select...</option><option>Less than 10</option><option>Over 10</option></select></div>
               </div>
             </div>
 
             <div style={s.section}>
-              <div style={s.secTitle}><HelpCircle size={18} /> 3. Group Origin & Referrer</div>
+              <div style={s.secTitle}><HelpCircle size={18} /> 3. Group Origin</div>
               <div style={s.grid}>
                 <div><label style={s.label}>How did you hear about us? *</label><select style={s.input} name="pub_group_source" required onChange={handleInputChange} value={formData.pub_group_source}><option value="">Select...</option><option>Recommendation</option><option>Join via Link</option></select></div>
                 <div><label style={s.label}>Months spent in group? *</label><select style={s.input} name="pub_group_duration" required onChange={handleInputChange} value={formData.pub_group_duration}><option value="">Select...</option><option>A year or more</option><option>6 months or less</option><option>Less than 2 months</option></select></div>
@@ -189,7 +192,7 @@ const App = () => {
         {/* --- LOGIN VIEW --- */}
         {view === 'login' && (
           <form onSubmit={handleLogin} style={{maxWidth:'350px', margin:'40px auto'}}>
-            <h2 style={{textAlign:'center', marginBottom:'20px'}}>Admin Dashboard</h2>
+            <h2 style={{textAlign:'center', marginBottom:'20px'}}>Admin Login</h2>
             <div style={{marginBottom:'15px'}}><label style={s.label}>Username</label><input style={s.input} type="text" name="username" required /></div>
             <div style={{marginBottom:'25px'}}><label style={s.label}>Password</label><input style={s.input} type="password" name="password" required /></div>
             <button style={s.btnPrimary}>Login</button>
@@ -200,43 +203,33 @@ const App = () => {
         {view === 'admin' && (
           <div>
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px'}}>
-              <h2><ShieldCheck color="#10b981" /> All Submissions</h2>
+              <h2><ShieldCheck color="#10b981" /> Dashboard ({totalSubmissions})</h2>
               <button style={{...s.btnSec, color:'red', borderColor:'red'}} onClick={() => setView('form')}>Logout</button>
             </div>
             {submissions.map(row => (
               <div key={row.id} style={s.adminBox}>
                 <div style={{borderBottom:'1px solid #f0f0f0', paddingBottom:'10px', marginBottom:'15px', fontWeight:'800', fontSize:'18px'}}>{row.pub_full_name}</div>
-                
                 <div style={s.adminGrid}>
                   <div><span style={s.dataLabel}>Email / Phone</span>{row.pub_email}<br/>{row.pub_phone}</div>
                   <div><span style={s.dataLabel}>Discipline</span>{row.pub_discipline}</div>
+                  <div><span style={s.dataLabel}>Manuscript Writer</span>{row.pub_manuscript_writer}</div>
+                  <div><span style={s.dataLabel}>Co-Authors / Charge</span>{row.pub_coauthors_count} authors | {row.pub_charge_per_author || 'N/A'}</div>
+                </div>
+                <div style={s.adminGrid}>
+                  <div><span style={s.dataLabel}>Comp. Score</span>{row.pub_competence_score}</div>
+                  <div><span style={s.dataLabel}>Group Info</span>{row.pub_group_source} ({row.pub_group_duration})</div>
+                  <div><span style={s.dataLabel}>Journal</span>{row.pub_journal_name} (Accepted: {row.pub_journal_accepted})</div>
                   <div><span style={s.dataLabel}>Submitted At</span>{new Date(row.pub_submitted_at).toLocaleString()}</div>
                 </div>
-
-                <div style={s.adminGrid}>
-                  <div><span style={s.dataLabel}>Manuscript Writer</span>{row.pub_manuscript_writer}</div>
-                  <div><span style={s.dataLabel}>Competence Score</span>{row.pub_competence_score}</div>
-                  <div><span style={s.dataLabel}>Group Source</span>{row.pub_group_source}</div>
-                  <div><span style={s.dataLabel}>Duration in Group</span>{row.pub_group_duration}</div>
+                <div style={{backgroundColor:'#f9fafb', padding:'10px', borderRadius:'8px', marginBottom:'10px'}}>
+                   <span style={s.dataLabel}>Referrer</span><p style={{fontSize:'13px', margin:0}}>{row.pub_referral || 'N/A'}</p>
                 </div>
-
-                <div style={s.adminGrid}>
-                  <div><span style={s.dataLabel}>Co-Authors</span>{row.pub_coauthors_count}</div>
-                  <div><span style={s.dataLabel}>Charge / Author</span>{row.pub_charge_per_author}</div>
-                  <div><span style={s.dataLabel}>Journal</span>{row.pub_journal_name} (Accepted: {row.pub_journal_accepted})</div>
+                <div style={{backgroundColor:'#f9fafb', padding:'10px', borderRadius:'8px', marginBottom:'10px'}}>
+                   <span style={s.dataLabel}>Justification</span><p style={{fontSize:'13px', margin:0}}>{row.pub_journal_justification}</p>
                 </div>
-
-                <div style={{backgroundColor:'#f9fafb', padding:'10px', borderRadius:'8px', marginBottom:'15px'}}>
-                   <span style={s.dataLabel}>Referrer / Group Info</span><p style={{fontSize:'13px', margin:0}}>{row.pub_referral || 'None'}</p>
-                </div>
-
-                <div style={{backgroundColor:'#f9fafb', padding:'10px', borderRadius:'8px', marginBottom:'15px'}}>
-                   <span style={s.dataLabel}>Journal Justification / Link</span><p style={{fontSize:'13px', margin:0}}>{row.pub_journal_justification}</p>
-                </div>
-
                 <div style={{display:'flex', gap:'20px', alignItems:'flex-end'}}>
-                   <div><span style={s.dataLabel}>Acceptance Proof</span>{row.pub_acceptance_evidence ? <img src={row.pub_acceptance_evidence} style={s.img} /> : 'None'}</div>
-                   <div><span style={s.dataLabel}>ID Document</span>{row.pub_id_document ? <img src={row.pub_id_document} style={s.img} /> : 'None'}</div>
+                   <div><span style={s.dataLabel}>Acceptance</span>{row.pub_acceptance_evidence ? <img src={row.pub_acceptance_evidence} style={s.img} /> : 'None'}</div>
+                   <div><span style={s.dataLabel}>ID Card</span>{row.pub_id_document ? <img src={row.pub_id_document} style={s.img} /> : 'None'}</div>
                    <div style={{marginLeft:'auto'}}><a href={row.pub_linkedin_profile} target="_blank" style={{color:'#4f46e5', fontWeight:'700', fontSize:'13px'}}>LinkedIn Profile</a></div>
                 </div>
               </div>
