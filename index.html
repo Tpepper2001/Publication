@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio-Info System | Research Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: #111827; }
+        
+        .section {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 10px;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 18px; }
+
+        label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; color: #374151; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .radio-option input { width: auto; margin-right: 12px; }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-admin { background: #10b981; color: white; margin-top: 20px; }
+        .btn-secondary { background: #6b7280; color: white; margin-top: 10px; }
+        .btn:disabled { opacity: 0.5; }
+
+        .message { padding: 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+        .message.show { display: block; }
+        .message.success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+        .message.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* Admin Styles */
+        .response-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .data-row { display: flex; border-bottom: 1px solid #f3f4f6; padding: 8px 0; }
+        .data-label { width: 180px; font-weight: 600; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; }
+        .data-val { flex: 1; font-size: 0.9rem; word-break: break-all; }
+        .img-preview { max-width: 120px; border-radius: 4px; margin-top: 5px; border: 1px solid #ddd; }
+        
+        @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <!-- Member Form Page -->
+    <div id="formPage" class="page active">
+        <div class="container">
+            <h1>Bio-Info System</h1>
+            <div id="formMessage" class="message"></div>
+            
+            <form id="bioInfoForm">
+                <div class="section">
+                    <span class="section-title">Personal Information</span>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Discipline *</label>
+                            <select id="discipline" required>
+                                <option value="">Select...</option>
+                                <option>Engineering</option>
+                                <option>Computer Science</option>
+                                <option>Health Sciences</option>
+                                <option>Physical Sciences</option>
+                                <option>Social Sciences</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <span class="section-title">Manuscript Details</span>
+                    <div class="form-group">
+                        <label>Who wrote it? *</label>
+                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Copied Online" required> Copied Online</label>
+                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Yourself"> Yourself</label>
+                        <label class="radio-option"><input type="radio" name="manuscript_writer" value="Hired Professional"> Hired Professional</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Writing competence score *</label>
+                        <label class="radio-option"><input type="radio" name="competence_score" value="Less than 10" required> Less than 10</label>
+                        <label class="radio-option"><input type="radio" name="competence_score" value="Over 10"> Over 10</label>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <span class="section-title">Referral & Duration</span>
+                    <div class="form-group">
+                        <label>Referrer Info</label>
+                        <textarea id="referral" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Group Duration *</label>
+                        <select id="group_duration" required>
+                            <option value="">Select...</option>
+                            <option>A year or more</option>
+                            <option>6 months or less</option>
+                            <option>Less than 2 months</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <span class="section-title">Journal & Sourcing</span>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Co-authors count *</label>
+                            <input type="number" id="coauthors" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Charge per author</label>
+                            <input type="text" id="charge">
+                        </div>
+                    </div>
+                    <div class="note">Total accumulation limit is 150k.</div>
+                    <div class="form-group">
+                        <label>Journal Name *</label>
+                        <input type="text" id="journal" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Link & Justification *</label>
+                        <textarea id="journal_justification" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Acceptance Screenshot</label>
+                        <input type="file" id="acceptance_file" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <span class="section-title">Identity Verification</span>
+                    <div class="form-group">
+                        <label>LinkedIn URL *</label>
+                        <input type="url" id="linkedin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Card / NIN</label>
+                        <input type="file" id="id_file" accept="image/*">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-primary">Submit Application</button>
+            </form>
+            <button class="btn btn-admin" onclick="showPage('loginPage')">Admin Login</button>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="page">
+        <div class="container" style="max-width: 400px;">
+            <h1>Admin Access</h1>
+            <div id="loginMessage" class="message"></div>
+            <form id="loginForm">
+                <div class="form-group"><label>Username</label><input type="text" id="username" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="password" required></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" class="btn btn-secondary" onclick="showPage('formPage')">Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminPage" class="page">
+        <div class="container">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h1>Submissions</h1>
+                <button onclick="showPage('formPage')" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">Logout</button>
+            </div>
+            <div id="responsesContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Init
+        const SUPABASE_URL = 'https://watrosnylvkiuvuptdtp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdHJvc255bHZraXV2dXB0ZHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzE2NzEsImV4cCI6MjA4MjUwNzY3MX0.ku6_Ngf2JRJ8fxLs_Q-EySgCU37MjUK3WofpO9bazds';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // UI Helpers
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 'adminPage') loadData();
+        }
+
+        async function toBase64(file) {
+            if (!file) return null;
+            return new Promise((res) => {
+                const r = new FileReader();
+                r.readAsDataURL(file);
+                r.onload = () => res(r.result);
+            });
+        }
+
+        // Logic: Submit Form
+        document.getElementById('bioInfoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+
+            try {
+                const payload = {
+                    pub_full_name: document.getElementById('fullName').value,
+                    pub_email: document.getElementById('email').value,
+                    pub_phone: document.getElementById('phone').value,
+                    pub_discipline: document.getElementById('discipline').value,
+                    pub_manuscript_writer: document.querySelector('input[name="manuscript_writer"]:checked').value,
+                    pub_competence_score: document.querySelector('input[name="competence_score"]:checked').value,
+                    pub_referral: document.getElementById('referral').value,
+                    pub_group_duration: document.getElementById('group_duration').value,
+                    pub_coauthors_count: parseInt(document.getElementById('coauthors').value),
+                    pub_charge_per_author: document.getElementById('charge').value,
+                    pub_journal_name: document.getElementById('journal').value,
+                    pub_journal_justification: document.getElementById('journal_justification').value,
+                    pub_linkedin_profile: document.getElementById('linkedin').value,
+                    pub_acceptance_evidence: await toBase64(document.getElementById('acceptance_file').files[0]),
+                    pub_id_document: await toBase64(document.getElementById('id_file').files[0]),
+                    pub_submitted_at: new Date().toISOString()
+                };
+
+                const { error } = await supabase.from('pub_bio_info_submissions').insert([payload]);
+                if (error) throw error;
+
+                document.getElementById('formMessage').textContent = "Submitted successfully!";
+                document.getElementById('formMessage').className = "message success show";
+                e.target.reset();
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Submit Application';
+            }
+        });
+
+        // Logic: Admin Login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (document.getElementById('username').value === 'publication' && document.getElementById('password').value === 'publication') {
+                showPage('adminPage');
+            } else {
+                alert("Wrong login");
+            }
+        });
+
+        // Logic: Admin Load
+        async function loadData() {
+            const container = document.getElementById('responsesContainer');
+            container.innerHTML = "Loading...";
+            
+            const { data, error } = await supabase.from('pub_bio_info_submissions').select('*').order('pub_submitted_at', { ascending: false });
+            
+            if (error) return container.innerHTML = "Error: " + error.message;
+
+            container.innerHTML = data.map(row => `
+                <div class="response-card">
+                    <div style="font-weight:bold; border-bottom:1px solid #eee; margin-bottom:10px;">${row.pub_full_name}</div>
+                    ${rowBuilder('Email', row.pub_email)}
+                    ${rowBuilder('Journal', row.pub_journal_name)}
+                    ${rowBuilder('LinkedIn', `<a href="${row.pub_linkedin_profile}" target="_blank">View</a>`)}
+                    <div class="data-row">
+                        <div class="data-label">Files</div>
+                        <div class="data-val">
+                            ${row.pub_acceptance_evidence ? `<img src="${row.pub_acceptance_evidence}" class="img-preview">` : ''}
+                            ${row.pub_id_document ? `<img src="${row.pub_id_document}" class="img-preview">` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function rowBuilder(label, val) {
+            return `<div class="data-row"><div class="data-label">${label}</div><div class="data-val">${val}</div></div>`;
+        }
+    </script>
+</body>
+</html>
