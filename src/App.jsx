@@ -1,266 +1,260 @@
-import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, BookOpen, PenTool, Link, Image as ImageIcon, 
-  ShieldCheck, HelpCircle, DollarSign, FileUp
+  Dna, Globe, Cpu, TrendingUp, BookOpen, 
+  ArrowRight, Github, Linkedin, Mail, ExternalLink, 
+  Layers, Beaker, Zap, Shield
 } from 'lucide-react';
 
-// --- Supabase Config ---
-const SUPABASE_URL = 'https://watrosnylvkiuvuptdtp.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdHJvc255bHZraXV2dXB0ZHRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY5MzE2NzEsImV4cCI6MjA4MjUwNzY3MX0.ku6_Ngf2JRJ8fxLs_Q-EySgCU37MjUK3WofpO9bazds';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const App = () => {
-  const [view, setView] = useState('form'); 
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
-  const [submissions, setSubmissions] = useState([]);
-  const [totalSubmissions, setTotalSubmissions] = useState(0);
-
-  const [formData, setFormData] = useState({
-    pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '',
-    pub_manuscript_writer: '', pub_competence_score: '', pub_group_source: '',
-    pub_referral: '', pub_group_duration: '', pub_coauthors_count: '',
-    pub_charge_per_author: '', pub_journal_name: '', pub_journal_accepted: '',
-    pub_journal_justification: '', pub_acceptance_evidence: null,
-    pub_id_document: null, pub_linkedin_profile: '', pub_manuscript_file: null
-  });
-
-  useEffect(() => { fetchSubmissionCount(); }, []);
-
-  const fetchSubmissionCount = async () => {
-    const { count, error } = await supabase.from('pub_bio_info_submissions').select('*', { count: 'exact', head: true });
-    if (!error) setTotalSubmissions(count || 0);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = async (e) => {
-    const { name, files } = e.target;
-    const file = files[0];
+// --- INLINE GLOBAL CSS ---
+const GlobalStyles = () => (
+  <style dangerouslySetInnerHTML={{ __html: `
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap');
     
-    if (file) {
-      // 400KB Limit Check (400 * 1024 bytes)
-      const limit = 400 * 1024;
-      if (file.size > limit) {
-        alert(`File is too large (${(file.size / 1024).toFixed(1)}KB). The maximum allowed size is 400KB. Please compress your file before uploading.`);
-        e.target.value = ""; // Clear the input
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => setFormData(prev => ({ ...prev, [name]: reader.result }));
-      reader.readAsDataURL(file);
+    :root {
+      --bg: #050505;
+      --accent: #10b981; /* Emerald 500 */
+      --secondary: #3b82f6; /* Blue 500 */
     }
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const { error } = await supabase.from('pub_bio_info_submissions').insert([{ ...formData, pub_submitted_at: new Date().toISOString() }]);
-      if (error) throw error;
-      setMessage({ text: 'Form Submitted Successfully!', type: 'success' });
-      setFormData({
-        pub_full_name: '', pub_email: '', pub_phone: '', pub_discipline: '',
-        pub_manuscript_writer: '', pub_competence_score: '', pub_group_source: '',
-        pub_referral: '', pub_group_duration: '', pub_coauthors_count: '',
-        pub_charge_per_author: '', pub_journal_name: '', pub_journal_accepted: '',
-        pub_journal_justification: '', pub_acceptance_evidence: null,
-        pub_id_document: null, pub_linkedin_profile: '', pub_manuscript_file: null
-      });
-      fetchSubmissionCount();
-      window.scrollTo(0, 0);
-    } catch (err) { setMessage({ text: err.message, type: 'error' }); } finally { setLoading(false); }
-  };
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const u = e.target.username.value.trim().toLowerCase();
-    const p = e.target.password.value.trim();
-    if (u === 'publication' && p === 'publication') { setView('admin'); fetchSubmissions(); } 
-    else { setMessage({ text: 'Invalid Credentials', type: 'error' }); }
-  };
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
-  const fetchSubmissions = async () => {
-    setLoading(true);
-    const { data, error } = await supabase.from('pub_bio_info_submissions').select('*').order('pub_submitted_at', { ascending: false });
-    if (!error) { setSubmissions(data); setTotalSubmissions(data.length); }
-    setLoading(false);
-  };
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
 
-  const s = {
-    body: { backgroundColor: '#f9fafb', minHeight: '100vh', padding: '20px', fontFamily: '"Segoe UI", Tahoma, sans-serif' },
-    card: { maxWidth: '850px', margin: '0 auto', backgroundColor: '#fff', borderRadius: '15px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', padding: '40px', position: 'relative' },
-    counter: { position: 'absolute', top: '15px', left: '25px', fontSize: '12px', fontWeight: 'bold', color: '#64748b' },
-    header: { textAlign: 'center', marginBottom: '40px', borderBottom: '2px solid #f1f5f9', paddingBottom: '20px', marginTop: '10px' },
-    title: { fontSize: '26px', fontWeight: '800', color: '#1e293b', margin: 0 },
-    section: { marginBottom: '40px' },
-    secHead: { fontSize: '18px', fontWeight: '700', color: '#4f46e5', marginBottom: '20px', borderLeft: '5px solid #4f46e5', paddingLeft: '15px' },
-    label: { display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#334155' },
-    input: { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e0', fontSize: '15px', boxSizing: 'border-box', marginBottom: '20px' },
-    radioGrp: { display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' },
-    radioBtn: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '15px' },
-    note: { backgroundColor: '#fffbeb', color: '#92400e', padding: '15px', borderRadius: '8px', fontSize: '13px', fontStyle: 'italic', borderLeft: '4px solid #f59e0b', marginBottom: '25px' },
-    btn: { width: '100%', padding: '16px', borderRadius: '10px', border: 'none', backgroundColor: '#4f46e5', color: '#fff', fontWeight: '700', fontSize: '16px', cursor: 'pointer' },
-    adminBox: { padding: '25px', border: '1px solid #e2e8f0', borderRadius: '12px', marginBottom: '20px', backgroundColor: '#fff' },
-    dataLabel: { fontWeight: '700', color: '#94a3b8', fontSize: '11px', textTransform: 'uppercase', display: 'block' },
-    img: { width: '120px', height: '80px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #e2e8f0', marginTop: '10px' }
-  };
+    .hero-glow {
+      position: absolute;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(5, 5, 5, 0) 70%);
+      filter: blur(60px);
+      z-index: -1;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050505;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #222;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+  `}} />
+);
+
+// --- COMPONENTS ---
+
+const Navbar = () => (
+  <nav className="fixed top-0 w-full z-50 px-6 py-5 flex justify-between items-center glass">
+    <div className="text-xl font-bold tracking-tighter uppercase">
+      Toyin<span className="text-emerald-500">.Ishola</span>
+    </div>
+    <div className="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-widest text-gray-400">
+      <a href="#about" className="hover:text-emerald-400 transition-colors">About</a>
+      <a href="#research" className="hover:text-emerald-400 transition-colors">Research</a>
+      <a href="#fintech" className="hover:text-emerald-400 transition-colors">FinTech Lab</a>
+      <a href="#contact" className="hover:text-emerald-400 transition-colors">Contact</a>
+    </div>
+    <button className="bg-white text-black px-5 py-2 rounded-full text-xs font-black hover:bg-emerald-500 hover:text-white transition-all">
+      COLLABORATE
+    </button>
+  </nav>
+);
+
+const Hero = () => (
+  <section className="relative min-h-screen flex items-center justify-center pt-20">
+    <div className="hero-glow" style={{ top: '-10%', left: '10%' }} />
+    <div className="hero-glow" style={{ bottom: '0%', right: '0%', background: 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(5, 5, 5, 0) 70%)' }} />
+    
+    <div className="container mx-auto px-6 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="inline-flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full mb-8">
+          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+          <span className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.2em]">Available for Innovation 2024</span>
+        </div>
+        
+        <h1 className="text-6xl md:text-9xl font-black mb-8 tracking-tighter leading-[0.9]">
+          RESEARCH.<br />
+          <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>INNOVATION.</span><br />
+          IMPACT.
+        </h1>
+        
+        <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-12 font-light leading-relaxed">
+          Bridging the gap between academic research in <span className="text-white">Bioinformatics</span> and 
+          disruptive <span className="text-white">FinTech ecosystems</span>. 
+        </p>
+
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6">
+          <button className="w-full md:w-auto px-10 py-5 bg-emerald-600 rounded-xl font-bold flex items-center justify-center hover:bg-emerald-500 transition-all group">
+            View Research <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
+          </button>
+          <button className="w-full md:w-auto px-10 py-5 glass rounded-xl font-bold hover:bg-white/10 transition-all">
+            The FinTech Lab
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  </section>
+);
+
+const SectionHeading = ({ subtitle, title }) => (
+  <div className="mb-16">
+    <span className="text-emerald-500 font-black text-xs uppercase tracking-[0.3em]">{subtitle}</span>
+    <h2 className="text-4xl md:text-5xl font-bold mt-2">{title}</h2>
+  </div>
+);
+
+const ResearchSection = () => {
+  const papers = [
+    { title: "Phytoremediation of Contaminants", tag: "Env Science", icon: <Globe size={24} /> },
+    { title: "Bioinformatics in Public Health", tag: "Health", icon: <Dna size={24} /> },
+    { title: "Digital Ajo: Modernizing Savings", tag: "FinTech", icon: <TrendingUp size={24} /> },
+  ];
 
   return (
-    <div style={s.body}>
-      <div style={s.card}>
-        <div style={s.counter}>
-          <span style={{color:'#4f46e5'}}>{totalSubmissions}/35</span> — When reach 35 contact administrator to upgrade
+    <section id="research" className="py-24">
+      <div className="container mx-auto px-6">
+        <SectionHeading subtitle="Academic Archive" title="Selected Publications" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {papers.map((p, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ y: -10 }}
+              className="p-10 rounded-3xl glass hover:border-emerald-500/50 transition-all cursor-pointer group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mb-8 group-hover:bg-emerald-500 group-hover:text-black transition-all">
+                {p.icon}
+              </div>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{p.tag}</span>
+              <h3 className="text-2xl font-bold mt-4 mb-8 leading-tight">{p.title}</h3>
+              <div className="flex items-center text-xs font-bold text-emerald-400 group-hover:translate-x-2 transition-transform">
+                READ ABSTRACT <ArrowRight size={14} className="ml-2" />
+              </div>
+            </motion.div>
+          ))}
         </div>
-
-        <header style={s.header}>
-          <h1 style={s.title}>Manuscript submission form</h1>
-          {view === 'form' ? 
-            <button style={{marginTop:'15px', color:'#4f46e5', background:'none', border:'none', cursor:'pointer', fontWeight:'bold'}} onClick={()=>setView('login')}>Admin Access</button> :
-            <button style={{marginTop:'15px', color:'#4f46e5', background:'none', border:'none', cursor:'pointer', fontWeight:'bold'}} onClick={()=>setView('form')}>Back to Form</button>
-          }
-        </header>
-
-        {message.text && <div style={{padding:'15px', borderRadius:'8px', marginBottom:'20px', backgroundColor: message.type === 'success' ? '#f0fdf4' : '#fef2f2', color: message.type === 'success' ? '#166534' : '#991b1b', border:'1px solid currentColor'}}>{message.text}</div>}
-
-        {view === 'form' && (
-          <form onSubmit={handleSubmit}>
-            <div style={s.section}>
-              <h2 style={s.secHead}>Bio-Info</h2>
-              <label style={s.label}>Full Name</label><input style={s.input} type="text" name="pub_full_name" required onChange={handleInputChange} value={formData.pub_full_name} />
-              <label style={s.label}>Email Address</label><input style={s.input} type="email" name="pub_email" required onChange={handleInputChange} value={formData.pub_email} />
-              <label style={s.label}>Phone Number</label><input style={s.input} type="tel" name="pub_phone" required onChange={handleInputChange} value={formData.pub_phone} />
-              <label style={s.label}>Discipline</label>
-              <select style={s.input} name="pub_discipline" required onChange={handleInputChange} value={formData.pub_discipline}>
-                <option value="">Select...</option>
-                {['Engineering','Computer Science','Health Sciences','Physical Sciences','Social Sciences','Art','Eduction','Other'].map(d=><option key={d}>{d}</option>)}
-              </select>
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Info about the standard of the manuscript</h2>
-              <label style={s.label}>Who wrote the manuscript?</label>
-              <div style={s.radioGrp}>
-                {['Copied Online', 'Yourself', 'Hired a professional writer'].map(o => (
-                  <label key={o} style={s.radioBtn}><input type="radio" name="pub_manuscript_writer" value={o} required onChange={handleInputChange} /> {o}</label>
-                ))}
-              </div>
-              <label style={s.label}>Score your research writing competence and knowledge of research paper</label>
-              <div style={s.radioGrp}>
-                {['Less than 10', 'Over 10'].map(o => (
-                  <label key={o} style={s.radioBtn}><input type="radio" name="pub_competence_score" value={o} required onChange={handleInputChange} /> {o}</label>
-                ))}
-              </div>
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Info about the authors origin on group</h2>
-              <label style={s.label}>How did you hear about the group?</label>
-              <div style={s.radioGrp}>
-                {['Recommendation by a strong member (preferably)', 'Join via'].map(o => (
-                  <label key={o} style={s.radioBtn}><input type="radio" name="pub_group_source" value={o} required onChange={handleInputChange} /> {o}</label>
-                ))}
-              </div>
-              <label style={s.label}>Drop the name and number of the person who recommend the of the group you got the publication link from</label>
-              <textarea style={{...s.input, minHeight:'80px'}} name="pub_referral" onChange={handleInputChange} value={formData.pub_referral}></textarea>
-              <label style={s.label}>How many months have you spent on the group?</label>
-              <div style={s.radioGrp}>
-                {['A year or over a year', '6 months or less', 'Less than 2 month.'].map(o => (
-                  <label key={o} style={s.radioBtn}><input type="radio" name="pub_group_duration" value={o} required onChange={handleInputChange} /> {o}</label>
-                ))}
-              </div>
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Info about the sourcing</h2>
-              <label style={s.label}>How many co-authors are you looking at?</label>
-              <input style={s.input} type="number" name="pub_coauthors_count" required onChange={handleInputChange} value={formData.pub_coauthors_count} />
-              <label style={s.label}>How much are you charging per author ?</label>
-              <input style={s.input} type="text" name="pub_charge_per_author" required onChange={handleInputChange} value={formData.pub_charge_per_author} />
-              <div style={s.note}>Note: Authors cannot accumulate more than 150k from the group. i.e regardless of number of co-authors you want to source, the total amount you can accumulate per paper is 150k</div>
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Info about journals</h2>
-              <label style={s.label}>What journal are you using?</label>
-              <input style={s.input} type="text" name="pub_journal_name" required onChange={handleInputChange} value={formData.pub_journal_name} />
-              <label style={s.label}>Have you submitted to the journal and has it been accepted?</label>
-              <div style={s.radioGrp}>
-                {['Yes', 'No'].map(o => (
-                  <label key={o} style={s.radioBtn}><input type="radio" name="pub_journal_accepted" value={o} required onChange={handleInputChange} /> {o}</label>
-                ))}
-              </div>
-              <label style={s.label}>Justify why you are using the journal and drop the journal link.</label>
-              <textarea style={{...s.input, minHeight:'80px'}} name="pub_journal_justification" required onChange={handleInputChange} value={formData.pub_journal_justification}></textarea>
-              <label style={s.label}>Screenshot and upload evidence of Acceptance (Max 400KB)</label>
-              <input type="file" name="pub_acceptance_evidence" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Info about means of Identification</h2>
-              <label style={s.label}>Snap and upload your NIN, or International Passport or photograph passport ( optional - Max 400KB)</label>
-              <input type="file" name="pub_id_document" onChange={handleFileChange} accept="image/*" style={{marginBottom:'25px'}} />
-              <label style={s.label}>Drop the link of your LinkedIn profile. (Compulsory)</label>
-              <input style={s.input} type="url" name="pub_linkedin_profile" required onChange={handleInputChange} value={formData.pub_linkedin_profile} placeholder="https://linkedin.com/in/..." />
-            </div>
-
-            <div style={s.section}>
-              <h2 style={s.secHead}>Submit the Manuscript</h2>
-              <label style={s.label}>Upload (Max 400KB)</label>
-              <input type="file" name="pub_manuscript_file" required onChange={handleFileChange} style={{marginBottom:'25px'}} />
-            </div>
-
-            <button type="submit" disabled={loading} style={{...s.btn, opacity: loading ? 0.7 : 1}}>
-              {loading ? 'Processing...' : 'Submit Application'}
-            </button>
-          </form>
-        )}
-
-        {view === 'login' && (
-          <form onSubmit={handleLogin} style={{maxWidth:'350px', margin:'50px auto'}}>
-            <h2 style={{textAlign:'center', marginBottom:'25px'}}>Admin Login</h2>
-            <label style={s.label}>Username</label><input style={s.input} type="text" name="username" required />
-            <label style={s.label}>Password</label><input style={s.input} type="password" name="password" required />
-            <button style={s.btn}>Login</button>
-          </form>
-        )}
-
-        {view === 'admin' && (
-          <div>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
-              <h2 style={{display:'flex', alignItems:'center', gap:'10px'}}><ShieldCheck color="#10b981"/> Admin Dashboard ({totalSubmissions})</h2>
-              <button style={{color:'red', fontWeight:'bold', cursor:'pointer', border:'none', background:'none'}} onClick={()=>setView('form')}>Logout</button>
-            </div>
-            {submissions.map(row => (
-              <div key={row.id} style={s.adminBox}>
-                <div style={{borderBottom:'2px solid #f8fafc', paddingBottom:'10px', marginBottom:'15px', fontWeight:'800', fontSize:'18px', color:'#1e293b'}}>{row.pub_full_name}</div>
-                <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'20px'}}>
-                  <div><span style={s.dataLabel}>Email / Phone</span>{row.pub_email}<br/>{row.pub_phone}</div>
-                  <div><span style={s.dataLabel}>Discipline</span>{row.pub_discipline}</div>
-                  <div><span style={s.dataLabel}>Journal</span>{row.pub_journal_name}</div>
-                  <div><span style={s.dataLabel}>Manuscript</span>{row.pub_manuscript_file ? '✅ Uploaded' : '❌ Missing'}</div>
-                </div>
-                <div style={{marginTop:'20px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', backgroundColor:'#f8fafc', padding:'15px', borderRadius:'8px'}}>
-                  <div><span style={s.dataLabel}>Origin Info</span>Source: {row.pub_group_source}<br/>Spent: {row.pub_group_duration}<br/>Referrer: {row.pub_referral || 'N/A'}</div>
-                  <div><span style={s.dataLabel}>Sourcing Details</span>Co-Authors: {row.pub_coauthors_count}<br/>Charge: {row.pub_charge_per_author}</div>
-                </div>
-                <div style={{display:'flex', gap:'30px', marginTop:'20px', alignItems:'flex-end'}}>
-                   <div><span style={s.dataLabel}>Acceptance</span>{row.pub_acceptance_evidence ? <img src={row.pub_acceptance_evidence} style={s.img} alt="acceptance" /> : 'None'}</div>
-                   <div><span style={s.dataLabel}>ID Document</span>{row.pub_id_document ? <img src={row.pub_id_document} style={s.img} alt="id" /> : 'None'}</div>
-                   <div style={{marginLeft:'auto'}}><a href={row.pub_linkedin_profile} target="_blank" rel="noreferrer" style={{color:'#4f46e5', fontWeight:'bold', fontSize:'14px'}}>LinkedIn</a></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
-    </div>
+    </section>
   );
 };
 
-export default App;
+const FinTechLab = () => (
+  <section id="fintech" className="py-24 relative overflow-hidden">
+    <div className="container mx-auto px-6">
+      <div className="p-12 md:p-20 rounded-[40px] bg-gradient-to-br from-zinc-900 to-black border border-white/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-10 opacity-10">
+          <Layers size={200} />
+        </div>
+        
+        <div className="relative z-10 max-w-3xl">
+          <SectionHeading subtitle="Innovation Lab" title="The Future of Financial Tools" />
+          <p className="text-gray-400 text-lg mb-12">
+            Currently developing high-impact tools for the digital economy. From automated research fetchers 
+            to peer-to-peer contribution systems.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-4">
+              <div className="text-blue-500 flex items-center space-x-2">
+                <Shield size={20} /> <span className="text-xs font-bold uppercase tracking-widest">Live Concept</span>
+              </div>
+              <h4 className="text-xl font-bold italic">Anonymous VoiceShare</h4>
+              <p className="text-gray-500 text-sm">A secure WordPress plugin for untraceable feedback and whistleblowing.</p>
+            </div>
+            <div className="space-y-4">
+              <div className="text-emerald-500 flex items-center space-x-2">
+                <Beaker size={20} /> <span className="text-xs font-bold uppercase tracking-widest">In Development</span>
+              </div>
+              <h4 className="text-xl font-bold italic">Scholarly PDF AI</h4>
+              <p className="text-gray-500 text-sm">LLM-powered tool to automate academic resource discovery.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const Footer = () => (
+  <footer id="contact" className="py-20 border-t border-white/5 mt-20">
+    <div className="container mx-auto px-6 text-center">
+      <h2 className="text-4xl font-bold mb-8 italic">Let's build the future together.</h2>
+      <div className="flex justify-center space-x-8 mb-12">
+        <a href="#" className="p-4 glass rounded-full hover:text-emerald-500 transition-colors"><Github /></a>
+        <a href="#" className="p-4 glass rounded-full hover:text-emerald-500 transition-colors"><Linkedin /></a>
+        <a href="#" className="p-4 glass rounded-full hover:text-emerald-500 transition-colors"><Mail /></a>
+      </div>
+      <p className="text-gray-600 text-xs tracking-[0.4em] uppercase font-bold">Oluwatoyin Ishola • 2024</p>
+    </div>
+  </footer>
+);
+
+// --- MAIN APP ---
+export default function App() {
+  return (
+    <div className="min-h-screen">
+      <GlobalStyles />
+      <Navbar />
+      
+      <main>
+        <Hero />
+        
+        {/* Bio Section */}
+        <section id="about" className="py-24 glass">
+          <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+            <div className="relative">
+              <div className="w-full aspect-square rounded-[60px] bg-emerald-950/30 border border-emerald-500/20 flex items-center justify-center">
+                <Dna size={120} className="text-emerald-500 opacity-20" />
+              </div>
+              <div className="absolute -bottom-6 -right-6 p-8 glass rounded-3xl">
+                <div className="text-4xl font-black text-white">04+</div>
+                <div className="text-[10px] text-emerald-500 font-bold uppercase">Years Excellence</div>
+              </div>
+            </div>
+            <div>
+              <SectionHeading subtitle="Profile" title="Researcher. Developer. Storyteller." />
+              <p className="text-gray-400 leading-loose mb-8">
+                With a foundation in Environmental Science from Kaduna State University and a career 
+                built on digital transformation, I specialize in multidisciplinary problem-solving. 
+                Whether as an Editor-in-Chief or an SDG Ambassador, my focus remains the same: 
+                using technology to amplify human impact.
+              </p>
+              <button className="flex items-center font-bold text-sm border-b-2 border-emerald-500 pb-2 hover:text-emerald-500 transition-all">
+                DOWNLOAD FULL CV <ExternalLink size={16} className="ml-2" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <ResearchSection />
+        
+        <FinTechLab />
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
